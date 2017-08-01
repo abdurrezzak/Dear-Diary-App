@@ -124,11 +124,6 @@ public class SignUp extends javax.swing.JFrame {
                 signUpButMouseClicked(evt);
             }
         });
-        signUpBut.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                signUpButActionPerformed(evt);
-            }
-        });
         jPanel2.add(signUpBut, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 400, 370, 40));
 
         jLabel3.setFont(new java.awt.Font("SansSerif", 0, 15)); // NOI18N
@@ -202,10 +197,6 @@ public class SignUp extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_chosenUsernameActionPerformed
 
-    private void signUpButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_signUpButActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_signUpButActionPerformed
-
     private void chosenUsernameFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_chosenUsernameFocusGained
         // TODO add your handling code here:
         jLabel2.setForeground(new Color(251,11,247));
@@ -254,6 +245,9 @@ public class SignUp extends javax.swing.JFrame {
                         fout = new FileOutputStream("users/"+usr+".ser");
                         ObjectOutputStream oos = new ObjectOutputStream(fout);
                         oos.writeObject(newUser);
+                        this.dispose();
+                        new Login().setVisible(rootPaneCheckingEnabled);
+                        
                         JOptionPane.showMessageDialog(new JFrame(), "Your account has been created successfully.");
                         
                         
@@ -281,7 +275,9 @@ public class SignUp extends javax.swing.JFrame {
         }
         /*for(int i=0;i<allUsers.size();i++)
             JOptionPane.showMessageDialog(new JFrame(), allUsers.get(i).getUsername());*/
-         
+        
+        
+        
         
     }//GEN-LAST:event_signUpButMouseClicked
 

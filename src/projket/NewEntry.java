@@ -467,7 +467,13 @@ public class NewEntry extends javax.swing.JFrame {
 
     private void settingsButMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_settingsButMouseClicked
         this.setVisible(false);
-        new Settings().setVisible(true);
+        try {
+            new Settings().setVisible(true);
+        } catch (IOException ex) {
+            Logger.getLogger(NewEntry.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(NewEntry.class.getName()).log(Level.SEVERE, null, ex);
+        }
         
     }//GEN-LAST:event_settingsButMouseClicked
 
@@ -489,13 +495,21 @@ public class NewEntry extends javax.swing.JFrame {
 
     private void notesButMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_notesButMouseClicked
         this.setVisible(false);
-        new Notes().setVisible(true);
+        try {
+            new Notes().setVisible(true);
+        } catch (IOException | ClassNotFoundException ex) {
+            Logger.getLogger(NewEntry.class.getName()).log(Level.SEVERE, null, ex);
+        }
                 
     }//GEN-LAST:event_notesButMouseClicked
 
     private void yourDaysButMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_yourDaysButMouseClicked
         this.setVisible(false);
-        new YourDays().setVisible(true);
+        try {
+            new YourDays().setVisible(true);
+        } catch (IOException | ClassNotFoundException ex) {
+            Logger.getLogger(NewEntry.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_yourDaysButMouseClicked
 
     private void oldEntriesButMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_oldEntriesButMouseClicked
@@ -509,17 +523,31 @@ public class NewEntry extends javax.swing.JFrame {
 
     private void oldTalksButMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_oldTalksButMouseClicked
         this.setVisible(false);
-        new OldTalks().setVisible(true);
+        try {
+            new OldTalks().setVisible(true);
+        } catch (IOException ex) {
+            Logger.getLogger(NewEntry.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(NewEntry.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_oldTalksButMouseClicked
 
     private void albumsButMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_albumsButMouseClicked
         this.setVisible(false);
-        new Albums().setVisible(true);
+        try {
+            new Albums().setVisible(true);
+        } catch (IOException | ClassNotFoundException ex) {
+            Logger.getLogger(NewEntry.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_albumsButMouseClicked
 
     private void nyxButMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_nyxButMouseClicked
         this.setVisible(false);
-        new Nyx().setVisible(true);
+        try {
+            new Nyx().setVisible(true);
+        } catch (Exception ex) {
+            Logger.getLogger(NewEntry.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_nyxButMouseClicked
 
     private void searchButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchButActionPerformed
@@ -571,7 +599,14 @@ public class NewEntry extends javax.swing.JFrame {
         }
         inputentry.setText("");
         entryTitleField.setText("");
-        
+        this.dispose();
+        try {
+            new NewEntry().setVisible(true);
+        } catch (IOException ex) {
+            Logger.getLogger(NewEntry.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(NewEntry.class.getName()).log(Level.SEVERE, null, ex);
+        }
         
         
         

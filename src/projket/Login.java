@@ -107,6 +107,11 @@ public class Login extends javax.swing.JFrame {
                 txt_passwordFocusGained(evt);
             }
         });
+        txt_password.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txt_passwordActionPerformed(evt);
+            }
+        });
         jPanel2.add(txt_password, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 240, 370, 30));
 
         jLabel2.setFont(new java.awt.Font("SansSerif", 0, 15)); // NOI18N
@@ -198,7 +203,7 @@ public class Login extends javax.swing.JFrame {
 
     private void goToSignUpButMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_goToSignUpButMouseClicked
         // TODO add your handling code here:
-        this.setVisible(false);
+        this.dispose();
         try {
             new SignUp().setVisible(true);
         } catch (FileNotFoundException ex) {
@@ -270,6 +275,10 @@ public class Login extends javax.swing.JFrame {
         
         
     }//GEN-LAST:event_loginButMouseClicked
+
+    private void txt_passwordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_passwordActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txt_passwordActionPerformed
 
     
     /**

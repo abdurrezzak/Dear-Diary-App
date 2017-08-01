@@ -9,7 +9,7 @@ public class Photo implements Serializable{
     
     //properties
     String title;
-    String img;
+    String img = "/home/abdurrezzak/NetBeansProjects/Projket/src/projket/propicdefault.png" ;
     Date date;
     String explanation;
     
@@ -49,7 +49,10 @@ public class Photo implements Serializable{
         this.explanation = s;
     }
     
-    
+    public String getImage()
+    {
+        return this.img;
+    }
     
     
     

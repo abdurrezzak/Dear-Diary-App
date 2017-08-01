@@ -31,15 +31,13 @@ public class OldEntries extends javax.swing.JFrame {
 
     User curUser = new User();
     String curusername="";
-    
+    anEntry aa = new anEntry();
     public OldEntries() throws FileNotFoundException, IOException, ClassNotFoundException {
         initComponents();
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         this.setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);
         jPanel1.setBackground(new Color(82,3,68,0));
-        searchtf.setBackground(new Color(154,98,246,100));
-        oldEntriesList.setBackground(new Color(19,19,19,150));
-        searchBut.setBackground(new Color(0,0,0,0));
+        oldEntriesList.setBackground(new Color(0,0,0));
         
         /*
             this part figures out who logged in
@@ -70,7 +68,9 @@ public class OldEntries extends javax.swing.JFrame {
             dm.addElement(curUser.getEntries().get(i).getTitle());
         }
         
-        oldEntriesList.setModel(dm);
+        
+        if(dm.size() > 0)
+            oldEntriesList.setModel(dm);
         
         
     }
@@ -86,9 +86,6 @@ public class OldEntries extends javax.swing.JFrame {
 
         jLabel2 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
-        searchtf = new javax.swing.JTextField();
-        searchBut = new javax.swing.JButton();
-        searchLabel = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         oldEntriesList = new javax.swing.JList<>();
         jPanel1 = new javax.swing.JPanel();
@@ -120,29 +117,8 @@ public class OldEntries extends javax.swing.JFrame {
         jLabel1.setText("Entries");
         getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 90, 450, 50));
 
-        searchtf.setBackground(new java.awt.Color(1, 1, 1));
-        searchtf.setForeground(new java.awt.Color(254, 254, 254));
-        searchtf.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
-        searchtf.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                searchtfMouseClicked(evt);
-            }
-        });
-        getContentPane().add(searchtf, new org.netbeans.lib.awtextra.AbsoluteConstraints(880, 100, 330, 40));
-
-        searchBut.setIcon(new javax.swing.ImageIcon(getClass().getResource("/projket/search.png"))); // NOI18N
-        searchBut.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                searchButActionPerformed(evt);
-            }
-        });
-        getContentPane().add(searchBut, new org.netbeans.lib.awtextra.AbsoluteConstraints(1140, 100, 70, 40));
-
-        searchLabel.setForeground(new java.awt.Color(99, 245, 247));
-        searchLabel.setText("Search anything!");
-        getContentPane().add(searchLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(890, 100, 320, 40));
-
         oldEntriesList.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        oldEntriesList.setFont(new java.awt.Font("Ubuntu", 2, 24)); // NOI18N
         oldEntriesList.setForeground(new java.awt.Color(231, 156, 255));
         oldEntriesList.setModel(new javax.swing.AbstractListModel<String>() {
             String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
@@ -398,7 +374,13 @@ public class OldEntries extends javax.swing.JFrame {
 
     private void settingsButMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_settingsButMouseClicked
         this.setVisible(false);
-        new Settings().setVisible(true);
+        try {
+            new Settings().setVisible(true);
+        } catch (IOException ex) {
+            Logger.getLogger(OldEntries.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(OldEntries.class.getName()).log(Level.SEVERE, null, ex);
+        }
         
     }//GEN-LAST:event_settingsButMouseClicked
 
@@ -414,13 +396,23 @@ public class OldEntries extends javax.swing.JFrame {
 
     private void notesButMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_notesButMouseClicked
         this.setVisible(false);
-        new Notes().setVisible(true);
+        try {
+            new Notes().setVisible(true);
+        } catch (IOException ex) {
+            Logger.getLogger(OldEntries.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(OldEntries.class.getName()).log(Level.SEVERE, null, ex);
+        }
                 
     }//GEN-LAST:event_notesButMouseClicked
 
     private void yourDaysButMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_yourDaysButMouseClicked
         this.setVisible(false);
-        new YourDays().setVisible(true);
+        try {
+            new YourDays().setVisible(true);
+        } catch (IOException | ClassNotFoundException ex) {
+            Logger.getLogger(OldEntries.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_yourDaysButMouseClicked
 
     private void oldEntriesButMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_oldEntriesButMouseClicked
@@ -434,28 +426,32 @@ public class OldEntries extends javax.swing.JFrame {
 
     private void oldTalksButMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_oldTalksButMouseClicked
         this.setVisible(false);
-        new OldTalks().setVisible(true);
+        try {
+            new OldTalks().setVisible(true);
+        } catch (IOException ex) {
+            Logger.getLogger(OldEntries.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(OldEntries.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_oldTalksButMouseClicked
 
     private void albumsButMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_albumsButMouseClicked
         this.setVisible(false);
-        new Albums().setVisible(true);
+        try {
+            new Albums().setVisible(true);
+        } catch (IOException | ClassNotFoundException ex) {
+            Logger.getLogger(OldEntries.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_albumsButMouseClicked
 
     private void nyxButMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_nyxButMouseClicked
         this.setVisible(false);
-        new Nyx().setVisible(true);
+        try {
+            new Nyx().setVisible(true);
+        } catch (Exception ex) {
+            Logger.getLogger(OldEntries.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_nyxButMouseClicked
-
-    private void searchtfMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_searchtfMouseClicked
-        // TODO add your handling code here:
-        searchLabel.setVisible(false);
-    }//GEN-LAST:event_searchtfMouseClicked
-
-    private void searchButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchButActionPerformed
-        // TODO add your handling code here:
-
-    }//GEN-LAST:event_searchButActionPerformed
 
     private void oldEntriesListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_oldEntriesListValueChanged
         
@@ -464,12 +460,11 @@ public class OldEntries extends javax.swing.JFrame {
             File d = new File("sessions/curEntryTit.txt");
             out = new PrintWriter(new FileWriter(d, true));
             String s = oldEntriesList.getSelectedValue();
-            anEntry aa = new anEntry();
             out.append(s + "\r\n");
             out.close();
             aa.setVisible(true);
            
-        } catch (IOException | ClassNotFoundException ex) {
+        } catch (IOException ex) {
             Logger.getLogger(OldEntries.class.getName()).log(Level.SEVERE, null, ex);
         }
         
@@ -523,9 +518,6 @@ public class OldEntries extends javax.swing.JFrame {
     private javax.swing.JList<String> oldEntriesList;
     private javax.swing.JButton oldTalksBut;
     private javax.swing.JLabel propicLabel;
-    private javax.swing.JButton searchBut;
-    private javax.swing.JLabel searchLabel;
-    private javax.swing.JTextField searchtf;
     private javax.swing.JLabel settingsBut;
     private javax.swing.JLabel usernameLabel;
     private javax.swing.JButton yourDaysBut;

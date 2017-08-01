@@ -148,7 +148,6 @@ public class User implements Serializable{
             }
         
         return false;
-        
     }
     
     public boolean updateNote(Note n)

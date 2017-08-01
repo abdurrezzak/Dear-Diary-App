@@ -1,6 +1,8 @@
 package projket;
 
 import java.io.Serializable;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class OldTalk implements Serializable{
@@ -9,7 +11,9 @@ public class OldTalk implements Serializable{
     //properties
     String content;
     Date date;
-    String title;
+    DateFormat df = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
+    Date dateobj = new Date();
+    String title = df.format(dateobj)+".." ;
     
     public OldTalk()
     {

@@ -1,13 +1,20 @@
 package projket;
 
 import java.io.Serializable;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 
 public class Day implements Serializable{
     
     //properties
-    String title;
-    int type;
+    DateFormat df = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
+    Date dateobj = new Date();
+    String title = df.format(dateobj)+".." ;
+    
+    
+    String type;
     String content;
     
     public Day()
@@ -40,12 +47,12 @@ public class Day implements Serializable{
     }
     
     //type methods
-    public void setType(int type)
+    public void setType(String type)
     {
         this.type = type;
     }
     
-    public int getType()
+    public String getType()
     {
         return this.type;
     }

@@ -10,13 +10,25 @@ import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
+import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
+import javax.swing.JLabel;
 /**
  *
  * @author abdurrezzak
@@ -24,15 +36,62 @@ import javax.swing.JFileChooser;
 public class Albums extends javax.swing.JFrame {
 
     
-    public Albums() {
+    
+    User curUser = new User();
+    String curusername="";
+    Album curAlbum = new Album();
+    
+    public Albums() throws FileNotFoundException, IOException, ClassNotFoundException {
         initComponents();
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         this.setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);
         jPanel1.setBackground(new Color(82,3,68,0));
-        searchtf.setBackground(new Color(154,98,246,100));
+        propicLabel.setToolTipText("Click here to change your profile picture!");
+        creatingAlbumFrame.setVisible(false);
+        creatingAlbumFrame.setBackground(new Color(82,3,68));
+        albumBcg.setBackground(new Color(82,3,68));
+        oldAlbumsList.setBackground(Color.BLACK);
+        anAlbumFrame.setVisible(false);
+        anAlbumFrame.setBackground(new Color(82,3,68));
+        /*
+            this part figures out who logged in
+        */
+        String line = null; 
+        FileReader fileReader = new FileReader("sessions/usernames.txt");
+        try (BufferedReader bufferedReader = new BufferedReader(fileReader)) {
+            while((line = bufferedReader.readLine()) != null) {
+                curusername = line;
+            }
+        } 
         
-        searchBut.setBackground(new Color(0,0,0,0));
-        propic.setToolTipText("Click here to change your profile picture!");
+        /*
+            this part gets the info about the current user
+        */
+        
+        FileInputStream fis = new FileInputStream("users/"+curusername+".ser");
+        ObjectInputStream ois = new ObjectInputStream(fis);
+        curUser = (User) ois.readObject();
+        
+        //getting current info
+        propicLabel.setIcon(new ImageIcon(new ImageIcon(curUser.getProfilePicture()).getImage().getScaledInstance(200, 150, Image.SCALE_SMOOTH)));
+        usernameLabel.setText("Welcome "+curUser.getUsername() + "!");
+        
+        DefaultListModel dm = new DefaultListModel();
+        
+        for(int i=0;i<curUser.getAlbums().size();i++)
+        {
+            dm.addElement(curUser.getAlbums().get(i).getname());
+        }
+        
+        oldAlbumsList.setModel(dm);
+        
+        
+        
+        
+        
+        
+        
+        
     }
 
     /**
@@ -44,17 +103,28 @@ public class Albums extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        creatingAlbumFrame = new javax.swing.JPanel();
+        finishCreation = new javax.swing.JButton();
+        addedImages = new javax.swing.JPanel();
+        albumTit = new javax.swing.JTextField();
+        jSeparator2 = new javax.swing.JSeparator();
+        addImage = new javax.swing.JButton();
+        albumBcg = new javax.swing.JLabel();
+        anAlbumFrame = new javax.swing.JPanel();
+        Photos = new javax.swing.JPanel();
+        anAlbumTitle = new javax.swing.JLabel();
+        deleteAlbum = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        oldAlbumsList = new javax.swing.JList<>();
+        createAlbum = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
-        searchtf = new javax.swing.JTextField();
-        searchBut = new javax.swing.JButton();
-        searchLabel = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         nyxBut = new javax.swing.JButton();
         newEntryBut = new javax.swing.JButton();
         yourDaysBut = new javax.swing.JButton();
-        propic = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
+        propicLabel = new javax.swing.JLabel();
+        usernameLabel = new javax.swing.JLabel();
         notesBut = new javax.swing.JButton();
         oldEntriesBut = new javax.swing.JButton();
         albumsBut = new javax.swing.JButton();
@@ -70,6 +140,80 @@ public class Albums extends javax.swing.JFrame {
         setMinimumSize(new java.awt.Dimension(1280, 670));
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
+        creatingAlbumFrame.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        finishCreation.setText("Create");
+        finishCreation.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                finishCreationMouseClicked(evt);
+            }
+        });
+        creatingAlbumFrame.add(finishCreation, new org.netbeans.lib.awtextra.AbsoluteConstraints(660, 380, 180, 90));
+
+        addedImages.setLayout(new java.awt.GridLayout(1, 0));
+        creatingAlbumFrame.add(addedImages, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 160, 580, 310));
+        creatingAlbumFrame.add(albumTit, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 70, 570, 50));
+        creatingAlbumFrame.add(jSeparator2, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 130, 570, 20));
+
+        addImage.setText("Add Image");
+        addImage.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                addImageMouseClicked(evt);
+            }
+        });
+        creatingAlbumFrame.add(addImage, new org.netbeans.lib.awtextra.AbsoluteConstraints(660, 130, 180, 240));
+        creatingAlbumFrame.add(albumBcg, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 850, 500));
+
+        getContentPane().add(creatingAlbumFrame, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 130, 850, 500));
+
+        anAlbumFrame.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                anAlbumFrameMouseClicked(evt);
+            }
+        });
+        anAlbumFrame.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        Photos.setLayout(new java.awt.GridLayout(2, 7));
+        anAlbumFrame.add(Photos, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 120, 1050, 360));
+
+        anAlbumTitle.setFont(new java.awt.Font("Ubuntu", 2, 36)); // NOI18N
+        anAlbumTitle.setForeground(new java.awt.Color(243, 92, 239));
+        anAlbumFrame.add(anAlbumTitle, new org.netbeans.lib.awtextra.AbsoluteConstraints(29, 15, 1050, 70));
+
+        deleteAlbum.setText("Delete Album");
+        deleteAlbum.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                deleteAlbumMouseClicked(evt);
+            }
+        });
+        anAlbumFrame.add(deleteAlbum, new org.netbeans.lib.awtextra.AbsoluteConstraints(890, 510, 200, -1));
+
+        getContentPane().add(anAlbumFrame, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 90, 1150, 550));
+
+        oldAlbumsList.setFont(new java.awt.Font("Ubuntu", 0, 24)); // NOI18N
+        oldAlbumsList.setForeground(new java.awt.Color(162, 78, 162));
+        oldAlbumsList.setModel(new javax.swing.AbstractListModel<String>() {
+            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            public int getSize() { return strings.length; }
+            public String getElementAt(int i) { return strings[i]; }
+        });
+        oldAlbumsList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                oldAlbumsListValueChanged(evt);
+            }
+        });
+        jScrollPane1.setViewportView(oldAlbumsList);
+
+        getContentPane().add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 160, 810, 410));
+
+        createAlbum.setText("Create Album");
+        createAlbum.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                createAlbumMouseClicked(evt);
+            }
+        });
+        getContentPane().add(createAlbum, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 580, 810, 50));
+
         jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/projket/rsz_2logo.png"))); // NOI18N
         getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 10, 240, 100));
 
@@ -77,28 +221,6 @@ public class Albums extends javax.swing.JFrame {
         jLabel1.setForeground(new java.awt.Color(255, 0, 210));
         jLabel1.setText("Albums");
         getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 90, 450, 50));
-
-        searchtf.setBackground(new java.awt.Color(1, 1, 1));
-        searchtf.setForeground(new java.awt.Color(254, 254, 254));
-        searchtf.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
-        searchtf.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                searchtfMouseClicked(evt);
-            }
-        });
-        getContentPane().add(searchtf, new org.netbeans.lib.awtextra.AbsoluteConstraints(880, 100, 330, 40));
-
-        searchBut.setIcon(new javax.swing.ImageIcon(getClass().getResource("/projket/search.png"))); // NOI18N
-        searchBut.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                searchButActionPerformed(evt);
-            }
-        });
-        getContentPane().add(searchBut, new org.netbeans.lib.awtextra.AbsoluteConstraints(1140, 100, 70, 40));
-
-        searchLabel.setForeground(new java.awt.Color(99, 245, 247));
-        searchLabel.setText("Search anything!");
-        getContentPane().add(searchLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(890, 100, 320, 40));
 
         jPanel1.setBackground(new java.awt.Color(82, 3, 68));
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -161,18 +283,18 @@ public class Albums extends javax.swing.JFrame {
         });
         jPanel1.add(yourDaysBut, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 270, 120, 40));
 
-        propic.setBackground(new java.awt.Color(221, 128, 35));
-        propic.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
-        propic.addMouseListener(new java.awt.event.MouseAdapter() {
+        propicLabel.setBackground(new java.awt.Color(221, 128, 35));
+        propicLabel.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        propicLabel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                propicMouseClicked(evt);
+                propicLabelMouseClicked(evt);
             }
         });
-        jPanel1.add(propic, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 20, 200, 150));
+        jPanel1.add(propicLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 20, 200, 150));
 
-        jLabel4.setFont(new java.awt.Font("Symbola", 2, 24)); // NOI18N
-        jLabel4.setForeground(new java.awt.Color(254, 254, 254));
-        jPanel1.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 170, 220, 40));
+        usernameLabel.setFont(new java.awt.Font("Symbola", 2, 24)); // NOI18N
+        usernameLabel.setForeground(new java.awt.Color(254, 254, 254));
+        jPanel1.add(usernameLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 170, 220, 40));
 
         notesBut.setFont(new java.awt.Font("Ubuntu", 0, 14)); // NOI18N
         notesBut.setForeground(new java.awt.Color(1, 1, 1));
@@ -300,18 +422,18 @@ public class Albums extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_yourDaysButActionPerformed
 
-    private void propicMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_propicMouseClicked
+    private void propicLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_propicLabelMouseClicked
         // TODO add your handling code here:
         JFileChooser chooser = new JFileChooser();
         chooser.showOpenDialog(null);
         File f = chooser.getSelectedFile();
         String filename = f.getAbsolutePath();
         
-        propic.setIcon(new ImageIcon(new ImageIcon(filename).getImage().getScaledInstance(200, 150, Image.SCALE_SMOOTH)));
+        propicLabel.setIcon(new ImageIcon(new ImageIcon(filename).getImage().getScaledInstance(200, 150, Image.SCALE_SMOOTH)));
         //ImageIcon icon=new ImageIcon(filename);
         //jLabel3.setIcon(icon);
         
-    }//GEN-LAST:event_propicMouseClicked
+    }//GEN-LAST:event_propicLabelMouseClicked
 
     private void notesButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_notesButActionPerformed
         // TODO add your handling code here:
@@ -337,7 +459,13 @@ public class Albums extends javax.swing.JFrame {
 
     private void settingsButMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_settingsButMouseClicked
         this.setVisible(false);
-        new Settings().setVisible(true);
+        try {
+            new Settings().setVisible(true);
+        } catch (IOException ex) {
+            Logger.getLogger(Albums.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(Albums.class.getName()).log(Level.SEVERE, null, ex);
+        }
         
     }//GEN-LAST:event_settingsButMouseClicked
 
@@ -353,13 +481,23 @@ public class Albums extends javax.swing.JFrame {
 
     private void notesButMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_notesButMouseClicked
         this.setVisible(false);
-        new Notes().setVisible(true);
+        try {
+            new Notes().setVisible(true);
+        } catch (IOException ex) {
+            Logger.getLogger(Albums.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(Albums.class.getName()).log(Level.SEVERE, null, ex);
+        }
                 
     }//GEN-LAST:event_notesButMouseClicked
 
     private void yourDaysButMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_yourDaysButMouseClicked
         this.setVisible(false);
-        new YourDays().setVisible(true);
+        try {
+            new YourDays().setVisible(true);
+        } catch (IOException | ClassNotFoundException ex) {
+            Logger.getLogger(Albums.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_yourDaysButMouseClicked
 
     private void oldEntriesButMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_oldEntriesButMouseClicked
@@ -373,28 +511,190 @@ public class Albums extends javax.swing.JFrame {
 
     private void oldTalksButMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_oldTalksButMouseClicked
         this.setVisible(false);
-        new OldTalks().setVisible(true);
+        try {
+            new OldTalks().setVisible(true);
+        } catch (IOException | ClassNotFoundException ex) {
+            Logger.getLogger(Albums.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_oldTalksButMouseClicked
 
     private void albumsButMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_albumsButMouseClicked
         this.setVisible(false);
-        new Albums().setVisible(true);
+        try {
+            new Albums().setVisible(true);
+        } catch (IOException | ClassNotFoundException ex) {
+            Logger.getLogger(Albums.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_albumsButMouseClicked
 
     private void nyxButMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_nyxButMouseClicked
         this.setVisible(false);
-        new Nyx().setVisible(true);
+        try {
+            new Nyx().setVisible(true);
+        } catch (Exception ex) {
+            Logger.getLogger(Albums.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_nyxButMouseClicked
 
-    private void searchtfMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_searchtfMouseClicked
-        // TODO add your handling code here:
-        searchLabel.setVisible(false);
-    }//GEN-LAST:event_searchtfMouseClicked
+    private void createAlbumMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_createAlbumMouseClicked
+        
+        creatingAlbumFrame.setVisible(true);
+        oldAlbumsList.setVisible(false);
+        createAlbum.setVisible(false);
+    }//GEN-LAST:event_createAlbumMouseClicked
 
-    private void searchButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchButActionPerformed
-        // TODO add your handling code here:
+    private void addImageMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_addImageMouseClicked
+        
+        addedImages.setVisible(false);
+        JFileChooser chooser = new JFileChooser();
+        chooser.showOpenDialog(null);
+        File f = chooser.getSelectedFile();
+        String filename = f.getAbsolutePath();
+        
+        JLabel labelim = new JLabel();
+        labelim.setIcon(new ImageIcon(new ImageIcon(filename).getImage().getScaledInstance(280, 280, Image.SCALE_SMOOTH)));
+        
+        addedImages.add(labelim);
+        
+        DateFormat df = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
+        Date dateobj = new Date();
+        String imgtit = df.format(dateobj);
+        
+        Photo p = new Photo();
+        p.setTitle("image: " +imgtit );
+        p.changeImage(filename);
+        
+        curAlbum.addNewPhoto(p);
+        
+        addedImages.setVisible(true);
+        
+        
+        
+    }//GEN-LAST:event_addImageMouseClicked
 
-    }//GEN-LAST:event_searchButActionPerformed
+    private void finishCreationMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_finishCreationMouseClicked
+        
+        curAlbum.setName(albumTit.getText());
+        curAlbum.date = new Date();
+        
+        curUser.addAlbum(curAlbum);
+        
+        FileOutputStream fout = null;
+        File ff = new File("users/"+curUser.getUsername()+".ser");
+        ff.delete();
+        
+        try {
+            fout = new FileOutputStream("users/"+curUser.getUsername()+".ser");
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(Albums.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        ObjectOutputStream oos = null;
+        try {
+            oos = new ObjectOutputStream(fout);
+        } catch (IOException ex) {
+            Logger.getLogger(Albums.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        try {
+            oos.writeObject(curUser);
+        } catch (IOException ex) {
+            Logger.getLogger(Albums.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        creatingAlbumFrame.setVisible(false);
+        this.dispose();
+        
+        try {
+            new Albums().setVisible(true);
+        } catch (IOException | ClassNotFoundException ex) {
+            Logger.getLogger(Albums.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+       
+    }//GEN-LAST:event_finishCreationMouseClicked
+
+    private void oldAlbumsListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_oldAlbumsListValueChanged
+        
+        jPanel1.setVisible(false);
+        oldAlbumsList.setVisible(false);
+        
+        try{
+            
+            //JOptionPane.showMessageDialog(new JFrame(), "You seem to have forgotten your password, please try again.");
+
+            curAlbum = new Album();
+            
+            curAlbum.setName(oldAlbumsList.getSelectedValue());
+            curAlbum = curUser.getSpecificAlbum(curAlbum);
+            anAlbumTitle.setText(curAlbum.getname());
+            
+            
+            Photos.setVisible(false);
+            for (int i=0;i<curAlbum.getPhotos().size();i++) {
+                JLabel nl = new JLabel();
+                nl.setIcon(new ImageIcon(new ImageIcon(curAlbum.getPhotos().get(i).getImage()).getImage().getScaledInstance(180, 180, Image.SCALE_SMOOTH)));
+                
+                Photos.add(nl);
+                
+            }
+            Photos.setVisible(true);
+            
+
+            anAlbumFrame.setVisible(true);
+            
+        }catch(NullPointerException e)
+        {
+            
+        }
+        
+        
+    }//GEN-LAST:event_oldAlbumsListValueChanged
+
+    private void anAlbumFrameMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_anAlbumFrameMouseClicked
+        
+        this.dispose();
+        try {
+            new Albums().setVisible(true);
+        } catch (IOException | ClassNotFoundException ex) {
+            Logger.getLogger(Albums.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    }//GEN-LAST:event_anAlbumFrameMouseClicked
+
+    private void deleteAlbumMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_deleteAlbumMouseClicked
+        
+        curUser.deleteAlbum(curAlbum);
+        FileOutputStream fout = null;
+        File ff = new File("users/"+curUser.getUsername()+".ser");
+        ff.delete();
+        try {
+            fout = new FileOutputStream("users/"+curUser.getUsername()+".ser");
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(Notes.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        ObjectOutputStream oos = null;
+        try {
+            oos = new ObjectOutputStream(fout);
+        } catch (IOException ex) {
+            Logger.getLogger(Notes.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        try {
+            oos.writeObject(curUser);
+        } catch (IOException ex) {
+            Logger.getLogger(Notes.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        anAlbumFrame.setVisible(false);
+        this.dispose();
+        try {
+            new Albums().setVisible(true);
+        } catch (IOException ex) {
+            Logger.getLogger(Notes.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(Notes.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    }//GEN-LAST:event_deleteAlbumMouseClicked
 
     /**
      * @param args the command line arguments
@@ -483,29 +783,44 @@ public class Albums extends javax.swing.JFrame {
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> {
-            new Albums().setVisible(true);
+            try {
+                new Albums().setVisible(true);
+            } catch (IOException | ClassNotFoundException ex) {
+                Logger.getLogger(Albums.class.getName()).log(Level.SEVERE, null, ex);
+            }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel Photos;
+    private javax.swing.JButton addImage;
+    private javax.swing.JPanel addedImages;
+    private javax.swing.JLabel albumBcg;
+    private javax.swing.JTextField albumTit;
     private javax.swing.JButton albumsBut;
+    private javax.swing.JPanel anAlbumFrame;
+    private javax.swing.JLabel anAlbumTitle;
     private javax.swing.JLabel bcghomelabel;
+    private javax.swing.JButton createAlbum;
+    private javax.swing.JPanel creatingAlbumFrame;
+    private javax.swing.JButton deleteAlbum;
     private javax.swing.JLabel exitBut;
+    private javax.swing.JButton finishCreation;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JSeparator jSeparator2;
     private javax.swing.JButton newEntryBut;
     private javax.swing.JButton notesBut;
     private javax.swing.JButton nyxBut;
+    private javax.swing.JList<String> oldAlbumsList;
     private javax.swing.JButton oldEntriesBut;
     private javax.swing.JButton oldTalksBut;
-    private javax.swing.JLabel propic;
-    private javax.swing.JButton searchBut;
-    private javax.swing.JLabel searchLabel;
-    private javax.swing.JTextField searchtf;
+    private javax.swing.JLabel propicLabel;
     private javax.swing.JLabel settingsBut;
+    private javax.swing.JLabel usernameLabel;
     private javax.swing.JButton yourDaysBut;
     // End of variables declaration//GEN-END:variables
 }

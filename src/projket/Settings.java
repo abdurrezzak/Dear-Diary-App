@@ -10,26 +10,64 @@ import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 /**
  *
  * @author abdurrezzak
  */
 public class Settings extends javax.swing.JFrame {
 
+    User curUser = new User();
+    String curusername="";
     
-    public Settings() {
+    public Settings() throws FileNotFoundException, IOException, ClassNotFoundException {
         initComponents();
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         this.setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);
-        jPanel1.setBackground(new Color(82,3,68,0));
-        propic.setToolTipText("Click here to change your profile picture!");
+        propicLabel.setToolTipText("Click here to change your profile picture!");
+        UsernameChange.setBackground(new Color(0,0,0,0));
+        PasswordCurrent.setBackground(new Color(0,0,0,0));
+        PasswordToChange.setBackground(new Color(0,0,0,0));
+        
+        
+        
+        
+        String line = null; 
+        FileReader fileReader = new FileReader("sessions/usernames.txt");
+        try (BufferedReader bufferedReader = new BufferedReader(fileReader)) {
+            while((line = bufferedReader.readLine()) != null) {
+                curusername = line;
+            }
+        } 
+        
+        
+        ObjectInputStream ois;
+        try (FileInputStream fis = new FileInputStream("users/"+curusername+".ser")) {
+            ois = new ObjectInputStream(fis);
+            curUser = (User) ois.readObject();
+            fis.close();
+        }
+        ois.close();
+        
+        //getting current info
+        propicLabel.setIcon(new ImageIcon(new ImageIcon(curUser.getProfilePicture()).getImage().getScaledInstance(270, 250, Image.SCALE_SMOOTH)));
+        
+        
     }
 
     /**
@@ -42,20 +80,18 @@ public class Settings extends javax.swing.JFrame {
     private void initComponents() {
 
         jLabel2 = new javax.swing.JLabel();
-        jLabel1 = new javax.swing.JLabel();
-        jPanel1 = new javax.swing.JPanel();
-        nyxBut = new javax.swing.JButton();
-        newEntryBut = new javax.swing.JButton();
-        yourDaysBut = new javax.swing.JButton();
-        propic = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
-        notesBut = new javax.swing.JButton();
-        oldEntriesBut = new javax.swing.JButton();
-        albumsBut = new javax.swing.JButton();
-        oldTalksBut = new javax.swing.JButton();
-        exitBut = new javax.swing.JLabel();
-        settingsBut = new javax.swing.JLabel();
+        jSeparator3 = new javax.swing.JSeparator();
         jSeparator1 = new javax.swing.JSeparator();
+        PasswordToChange = new javax.swing.JPasswordField();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        jSeparator2 = new javax.swing.JSeparator();
+        UsernameChange = new javax.swing.JTextField();
+        jLabel3 = new javax.swing.JLabel();
+        saveBut = new javax.swing.JButton();
+        PasswordCurrent = new javax.swing.JPasswordField();
+        propicLabel = new javax.swing.JLabel();
         bcghomelabel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -65,190 +101,69 @@ public class Settings extends javax.swing.JFrame {
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/projket/rsz_2logo.png"))); // NOI18N
-        getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 10, 240, 100));
+        jLabel2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel2MouseClicked(evt);
+            }
+        });
+        getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 10, 240, 100));
+
+        jSeparator3.setBackground(new java.awt.Color(203, 218, 64));
+        jSeparator3.setForeground(new java.awt.Color(164, 238, 51));
+        getContentPane().add(jSeparator3, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 390, 540, 20));
+
+        jSeparator1.setBackground(new java.awt.Color(203, 218, 64));
+        jSeparator1.setForeground(new java.awt.Color(164, 238, 51));
+        getContentPane().add(jSeparator1, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 260, 540, 20));
+
+        PasswordToChange.setBorder(null);
+        getContentPane().add(PasswordToChange, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 350, 380, 40));
 
         jLabel1.setFont(new java.awt.Font("Times New Roman", 1, 36)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 0, 210));
         jLabel1.setText("Settings");
-        getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 90, 450, 50));
+        getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 120, 450, 50));
 
-        jPanel1.setBackground(new java.awt.Color(82, 3, 68));
-        jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
-        nyxBut.setFont(new java.awt.Font("Ubuntu", 0, 14)); // NOI18N
-        nyxBut.setForeground(new java.awt.Color(1, 1, 1));
-        nyxBut.setText("TALK TO NYX");
-        nyxBut.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
-        nyxBut.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
-        nyxBut.setMargin(new java.awt.Insets(0, 100, 0, 0));
-        nyxBut.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                nyxButMouseClicked(evt);
-            }
-        });
-        nyxBut.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                nyxButActionPerformed(evt);
-            }
-        });
-        jPanel1.add(nyxBut, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 370, 260, 40));
-
-        newEntryBut.setFont(new java.awt.Font("Ubuntu", 0, 14)); // NOI18N
-        newEntryBut.setForeground(new java.awt.Color(1, 1, 1));
-        newEntryBut.setIcon(new javax.swing.ImageIcon(getClass().getResource("/projket/addentry.png"))); // NOI18N
-        newEntryBut.setText("New Entry");
-        newEntryBut.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
-        newEntryBut.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        newEntryBut.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
-        newEntryBut.setMargin(new java.awt.Insets(0, 100, 0, 0));
-        newEntryBut.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                newEntryButMouseClicked(evt);
-            }
-        });
-        newEntryBut.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                newEntryButActionPerformed(evt);
-            }
-        });
-        jPanel1.add(newEntryBut, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 220, 120, 40));
-
-        yourDaysBut.setFont(new java.awt.Font("Ubuntu", 0, 14)); // NOI18N
-        yourDaysBut.setForeground(new java.awt.Color(1, 1, 1));
-        yourDaysBut.setIcon(new javax.swing.ImageIcon(getClass().getResource("/projket/yourdays.png"))); // NOI18N
-        yourDaysBut.setText("Your Days");
-        yourDaysBut.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
-        yourDaysBut.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        yourDaysBut.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
-        yourDaysBut.setMargin(new java.awt.Insets(0, 100, 0, 0));
-        yourDaysBut.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                yourDaysButMouseClicked(evt);
-            }
-        });
-        yourDaysBut.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                yourDaysButActionPerformed(evt);
-            }
-        });
-        jPanel1.add(yourDaysBut, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 270, 120, 40));
-
-        propic.setBackground(new java.awt.Color(221, 128, 35));
-        propic.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
-        propic.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                propicMouseClicked(evt);
-            }
-        });
-        jPanel1.add(propic, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 20, 200, 150));
-
-        jLabel4.setFont(new java.awt.Font("Symbola", 2, 24)); // NOI18N
+        jLabel4.setFont(new java.awt.Font("Ubuntu", 1, 15)); // NOI18N
         jLabel4.setForeground(new java.awt.Color(254, 254, 254));
-        jPanel1.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 170, 220, 40));
+        jLabel4.setText("Password");
+        getContentPane().add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 290, 130, 40));
 
-        notesBut.setFont(new java.awt.Font("Ubuntu", 0, 14)); // NOI18N
-        notesBut.setForeground(new java.awt.Color(1, 1, 1));
-        notesBut.setIcon(new javax.swing.ImageIcon(getClass().getResource("/projket/notes.png"))); // NOI18N
-        notesBut.setText("Notes");
-        notesBut.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
-        notesBut.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        notesBut.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
-        notesBut.setMargin(new java.awt.Insets(0, 100, 0, 0));
-        notesBut.addMouseListener(new java.awt.event.MouseAdapter() {
+        jLabel5.setFont(new java.awt.Font("Ubuntu", 1, 15)); // NOI18N
+        jLabel5.setForeground(new java.awt.Color(254, 254, 254));
+        jLabel5.setText("New Password");
+        getContentPane().add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 350, 130, 40));
+
+        jSeparator2.setBackground(new java.awt.Color(203, 218, 64));
+        jSeparator2.setForeground(new java.awt.Color(164, 238, 51));
+        getContentPane().add(jSeparator2, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 330, 540, 20));
+
+        UsernameChange.setBorder(null);
+        getContentPane().add(UsernameChange, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 220, 380, 40));
+
+        jLabel3.setFont(new java.awt.Font("Ubuntu", 1, 15)); // NOI18N
+        jLabel3.setForeground(new java.awt.Color(254, 254, 254));
+        jLabel3.setText("Username");
+        getContentPane().add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 220, 130, 40));
+
+        saveBut.setBackground(new java.awt.Color(254, 123, 244));
+        saveBut.setText("Save Changes");
+        saveBut.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                notesButMouseClicked(evt);
+                saveButMouseClicked(evt);
             }
         });
-        notesBut.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                notesButActionPerformed(evt);
-            }
-        });
-        jPanel1.add(notesBut, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 220, 120, 40));
+        getContentPane().add(saveBut, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 410, 540, 70));
 
-        oldEntriesBut.setFont(new java.awt.Font("Ubuntu", 0, 14)); // NOI18N
-        oldEntriesBut.setForeground(new java.awt.Color(1, 1, 1));
-        oldEntriesBut.setIcon(new javax.swing.ImageIcon(getClass().getResource("/projket/oldentries.png"))); // NOI18N
-        oldEntriesBut.setText("Old Entries");
-        oldEntriesBut.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
-        oldEntriesBut.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        oldEntriesBut.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
-        oldEntriesBut.setMargin(new java.awt.Insets(0, 100, 0, 0));
-        oldEntriesBut.addMouseListener(new java.awt.event.MouseAdapter() {
+        PasswordCurrent.setBorder(null);
+        getContentPane().add(PasswordCurrent, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 290, 380, 40));
+
+        propicLabel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                oldEntriesButMouseClicked(evt);
+                propicLabelMouseClicked(evt);
             }
         });
-        oldEntriesBut.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                oldEntriesButActionPerformed(evt);
-            }
-        });
-        jPanel1.add(oldEntriesBut, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 270, 120, 40));
-
-        albumsBut.setFont(new java.awt.Font("Ubuntu", 0, 14)); // NOI18N
-        albumsBut.setForeground(new java.awt.Color(1, 1, 1));
-        albumsBut.setIcon(new javax.swing.ImageIcon(getClass().getResource("/projket/albums.png"))); // NOI18N
-        albumsBut.setText("Albums");
-        albumsBut.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
-        albumsBut.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        albumsBut.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
-        albumsBut.setMargin(new java.awt.Insets(0, 100, 0, 0));
-        albumsBut.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                albumsButMouseClicked(evt);
-            }
-        });
-        albumsBut.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                albumsButActionPerformed(evt);
-            }
-        });
-        jPanel1.add(albumsBut, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 320, 120, 40));
-
-        oldTalksBut.setFont(new java.awt.Font("Ubuntu", 0, 14)); // NOI18N
-        oldTalksBut.setForeground(new java.awt.Color(1, 1, 1));
-        oldTalksBut.setIcon(new javax.swing.ImageIcon(getClass().getResource("/projket/oldtalks.png"))); // NOI18N
-        oldTalksBut.setText("Old Talks");
-        oldTalksBut.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
-        oldTalksBut.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        oldTalksBut.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
-        oldTalksBut.setMargin(new java.awt.Insets(0, 100, 0, 0));
-        oldTalksBut.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                oldTalksButMouseClicked(evt);
-            }
-        });
-        oldTalksBut.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                oldTalksButActionPerformed(evt);
-            }
-        });
-        jPanel1.add(oldTalksBut, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 320, 120, 40));
-
-        exitBut.setIcon(new javax.swing.ImageIcon(getClass().getResource("/projket/exitt.png"))); // NOI18N
-        exitBut.setText("jLabel3");
-        exitBut.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                exitButMouseClicked(evt);
-            }
-        });
-        jPanel1.add(exitBut, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 440, 50, 50));
-
-        settingsBut.setIcon(new javax.swing.ImageIcon(getClass().getResource("/projket/settings.png"))); // NOI18N
-        settingsBut.setText("jLabel3");
-        settingsBut.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                settingsButMouseClicked(evt);
-            }
-        });
-        jPanel1.add(settingsBut, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 440, 50, 50));
-
-        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 110, 290, 520));
-
-        jSeparator1.setBackground(new java.awt.Color(203, 218, 64));
-        jSeparator1.setForeground(new java.awt.Color(164, 238, 51));
-        getContentPane().add(jSeparator1, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 130, 30, 470));
+        getContentPane().add(propicLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(770, 210, 270, 250));
 
         bcghomelabel.setBackground(new java.awt.Color(82, 3, 68));
         bcghomelabel.setForeground(new java.awt.Color(254, 254, 254));
@@ -260,103 +175,107 @@ public class Settings extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void nyxButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nyxButActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_nyxButActionPerformed
-
-    private void newEntryButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newEntryButActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_newEntryButActionPerformed
-
-    private void yourDaysButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_yourDaysButActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_yourDaysButActionPerformed
-
-    private void propicMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_propicMouseClicked
-        // TODO add your handling code here:
-        JFileChooser chooser = new JFileChooser();
-        chooser.showOpenDialog(null);
-        File f = chooser.getSelectedFile();
-        String filename = f.getAbsolutePath();
+    private void saveButMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_saveButMouseClicked
         
-        propic.setIcon(new ImageIcon(new ImageIcon(filename).getImage().getScaledInstance(200, 150, Image.SCALE_SMOOTH)));
-        //ImageIcon icon=new ImageIcon(filename);
-        //jLabel3.setIcon(icon);
         
-    }//GEN-LAST:event_propicMouseClicked
-
-    private void notesButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_notesButActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_notesButActionPerformed
-
-    private void oldEntriesButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_oldEntriesButActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_oldEntriesButActionPerformed
-
-    private void albumsButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_albumsButActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_albumsButActionPerformed
-
-    private void oldTalksButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_oldTalksButActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_oldTalksButActionPerformed
-
-    private void exitButMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exitButMouseClicked
-        // TODO add your handling code here:
-        this.setVisible(false);
-        new Login().setVisible(true);
-    }//GEN-LAST:event_exitButMouseClicked
-
-    private void settingsButMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_settingsButMouseClicked
-        this.setVisible(false);
-        new Settings().setVisible(true);
         
-    }//GEN-LAST:event_settingsButMouseClicked
-
-    private void newEntryButMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_newEntryButMouseClicked
+        File fk = new File("users/"+UsernameChange.getText()+".ser");
+        if(fk.exists())
+            JOptionPane.showMessageDialog(new JFrame(), "The username is already in use!" );
+        else if(curUser.getPassword().equals(new String(PasswordCurrent.getPassword())))
+        {
+            
         
-        this.setVisible(false);
-        try {
-            new NewEntry().setVisible(true);
-        } catch (IOException | ClassNotFoundException ex) {
-            Logger.getLogger(Settings.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }//GEN-LAST:event_newEntryButMouseClicked
-
-    private void notesButMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_notesButMouseClicked
-        this.setVisible(false);
-        new Notes().setVisible(true);
+            //JOptionPane.showMessageDialog(new JFrame(),curUser.getUsername() );
+            
+            File ff = new File("users/"+curUser.getUsername()+".ser");
+            
+            ff.delete();
+            
+            curUser.setUsername(UsernameChange.getText());
+            curUser.setPassword(new String(PasswordToChange.getPassword()));
+            
+            FileOutputStream fout = null;
+            
                 
-    }//GEN-LAST:event_notesButMouseClicked
+            try {
+                fout = new FileOutputStream("users/"+curUser.getUsername()+".ser");
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(Settings.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            ObjectOutputStream oos = null;
+            try {
+                oos = new ObjectOutputStream(fout);
+            } catch (IOException ex) {
+                Logger.getLogger(Settings.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            try {
+                oos.writeObject(curUser);
+            } catch (IOException ex) {
+                Logger.getLogger(Settings.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            try {
+                fout.close();
+            } catch (IOException ex) {
+                Logger.getLogger(Settings.class.getName()).log(Level.SEVERE, null, ex);
+            }
 
-    private void yourDaysButMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_yourDaysButMouseClicked
-        this.setVisible(false);
-        new YourDays().setVisible(true);
-    }//GEN-LAST:event_yourDaysButMouseClicked
+            this.dispose();
+            new Login().setVisible(true);
+        } 
+        else
+            JOptionPane.showMessageDialog(new JFrame(), "Your password is wrong, please try again.");
+        
+        
+        
+        
+    }//GEN-LAST:event_saveButMouseClicked
 
-    private void oldEntriesButMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_oldEntriesButMouseClicked
-        this.setVisible(false);
+    private void propicLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_propicLabelMouseClicked
+        
+        FileOutputStream fout = null;
         try {
-            new OldEntries().setVisible(true);
-        } catch (IOException | ClassNotFoundException ex) {
+            JFileChooser chooser = new JFileChooser();
+            chooser.showOpenDialog(null);
+            File f = chooser.getSelectedFile();
+            String filename = f.getAbsolutePath();
+            curUser.changeProfilePicture(filename);
+            File ff = new File("users/"+curUser.getUsername()+".ser");
+            ff.delete();
+            fout = new FileOutputStream("users/"+curUser.getUsername()+".ser");
+            ObjectOutputStream oos = new ObjectOutputStream(fout);
+            oos.writeObject(curUser);
+            propicLabel.setIcon(new ImageIcon(new ImageIcon(curUser.getProfilePicture()).getImage().getScaledInstance(270, 250, Image.SCALE_SMOOTH)));
+            oos.close();
+        } 
+        catch (FileNotFoundException ex) {
+            Logger.getLogger(Home.class.getName()).log(Level.SEVERE, null, ex);
+        } 
+        catch (IOException ex) {
+            Logger.getLogger(Home.class.getName()).log(Level.SEVERE, null, ex);
+        } 
+        finally {
+            try {
+                fout.close();
+            } catch (IOException ex) {
+                Logger.getLogger(Home.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        
+    }//GEN-LAST:event_propicLabelMouseClicked
+
+    private void jLabel2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel2MouseClicked
+        
+        this.dispose();
+        try {
+            new Home().setVisible(true);
+        } catch (IOException ex) {
+            Logger.getLogger(Settings.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
             Logger.getLogger(Settings.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }//GEN-LAST:event_oldEntriesButMouseClicked
-
-    private void oldTalksButMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_oldTalksButMouseClicked
-        this.setVisible(false);
-        new OldTalks().setVisible(true);
-    }//GEN-LAST:event_oldTalksButMouseClicked
-
-    private void albumsButMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_albumsButMouseClicked
-        this.setVisible(false);
-        new Albums().setVisible(true);
-    }//GEN-LAST:event_albumsButMouseClicked
-
-    private void nyxButMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_nyxButMouseClicked
-        this.setVisible(false);
-        new Nyx().setVisible(true);
-    }//GEN-LAST:event_nyxButMouseClicked
+        
+    }//GEN-LAST:event_jLabel2MouseClicked
 
     /**
      * @param args the command line arguments
@@ -419,27 +338,29 @@ public class Settings extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Settings().setVisible(true);
+                try {
+                    new Settings().setVisible(true);
+                } catch (IOException | ClassNotFoundException ex) {
+                    Logger.getLogger(Settings.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton albumsBut;
+    private javax.swing.JPasswordField PasswordCurrent;
+    private javax.swing.JPasswordField PasswordToChange;
+    private javax.swing.JTextField UsernameChange;
     private javax.swing.JLabel bcghomelabel;
-    private javax.swing.JLabel exitBut;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JPanel jPanel1;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JSeparator jSeparator1;
-    private javax.swing.JButton newEntryBut;
-    private javax.swing.JButton notesBut;
-    private javax.swing.JButton nyxBut;
-    private javax.swing.JButton oldEntriesBut;
-    private javax.swing.JButton oldTalksBut;
-    private javax.swing.JLabel propic;
-    private javax.swing.JLabel settingsBut;
-    private javax.swing.JButton yourDaysBut;
+    private javax.swing.JSeparator jSeparator2;
+    private javax.swing.JSeparator jSeparator3;
+    private javax.swing.JLabel propicLabel;
+    private javax.swing.JButton saveBut;
     // End of variables declaration//GEN-END:variables
 }

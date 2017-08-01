@@ -9,12 +9,19 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Toolkit;
-import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.imageio.ImageIO;
+import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 /**
@@ -23,16 +30,56 @@ import javax.swing.JFileChooser;
  */
 public class YourDays extends javax.swing.JFrame {
 
+    User curUser = new User();
+    String curusername="";
+    ArrayList<Day> usersdays = new ArrayList<>();
     
-    public YourDays() {
+    public YourDays() throws FileNotFoundException, IOException, ClassNotFoundException {
         initComponents();
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         this.setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);
         jPanel1.setBackground(new Color(82,3,68,0));
-        searchtf.setBackground(new Color(154,98,246,100));
+        aDayTitle.setBackground(new Color(0,0,0,0));
+        /*
+            this part figures out who logged in
+        */
+        String line = null; 
+        FileReader fileReader = new FileReader("sessions/usernames.txt");
+        try (BufferedReader bufferedReader = new BufferedReader(fileReader)) {
+            while((line = bufferedReader.readLine()) != null) {
+                curusername = line;
+            }
+        } 
         
-        searchBut.setBackground(new Color(0,0,0,0));
-        propic.setToolTipText("Click here to change your profile picture!");
+        
+        FileInputStream fis = new FileInputStream("users/"+curusername+".ser");
+        ObjectInputStream ois = new ObjectInputStream(fis);
+        curUser = (User) ois.readObject();
+        
+        
+        //getting current info
+        propicLabel.setIcon(new ImageIcon(new ImageIcon(curUser.getProfilePicture()).getImage().getScaledInstance(200, 150, Image.SCALE_SMOOTH)));
+        usernameLabel.setText("Welcome "+curUser.getUsername() + "!");
+        
+        creatingNewDay.setVisible(false);
+        newDayTitle.setBackground(new Color(0,0,0,0));
+        newDayContent.setBackground(new Color(0,0,0,0));
+        
+        usersdays = curUser.getDays();
+        
+        DefaultListModel dm = new DefaultListModel();
+        
+        for(int i=0;i<curUser.getDays().size();i++)
+        {
+            dm.addElement(curUser.getDays().get(i).getTitle());
+            
+        }
+        
+        oldDaysList.setModel(dm);
+        
+        aDayFrame.setVisible(false);
+        
+        
     }
 
     /**
@@ -44,17 +91,34 @@ public class YourDays extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        aDayFrame = new javax.swing.JPanel();
+        aDayTitle = new javax.swing.JTextField();
+        aDayDeleteBut = new javax.swing.JButton();
+        asdas = new javax.swing.JScrollPane();
+        aDayContent = new javax.swing.JTextArea();
+        aDaybcg = new javax.swing.JLabel();
+        creatingNewDay = new javax.swing.JPanel();
+        sep = new javax.swing.JSeparator();
+        sep1 = new javax.swing.JSeparator();
+        createdDay = new javax.swing.JButton();
+        newDayTitle = new javax.swing.JTextField();
+        Bday = new javax.swing.JRadioButton();
+        Happy = new javax.swing.JRadioButton();
+        Sad = new javax.swing.JRadioButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        newDayContent = new javax.swing.JTextArea();
+        crNewDayBcg = new javax.swing.JLabel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        oldDaysList = new javax.swing.JList<>();
+        addNewDay = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
-        searchtf = new javax.swing.JTextField();
-        searchBut = new javax.swing.JButton();
-        searchLabel = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         nyxBut = new javax.swing.JButton();
         newEntryBut = new javax.swing.JButton();
         yourDaysBut = new javax.swing.JButton();
-        propic = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
+        propicLabel = new javax.swing.JLabel();
+        usernameLabel = new javax.swing.JLabel();
         notesBut = new javax.swing.JButton();
         oldEntriesBut = new javax.swing.JButton();
         albumsBut = new javax.swing.JButton();
@@ -70,35 +134,118 @@ public class YourDays extends javax.swing.JFrame {
         setMinimumSize(new java.awt.Dimension(1280, 670));
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
+        aDayFrame.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                aDayFrameMouseClicked(evt);
+            }
+        });
+        aDayFrame.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        aDayTitle.setFont(new java.awt.Font("Ubuntu", 2, 36)); // NOI18N
+        aDayTitle.setForeground(new java.awt.Color(217, 81, 210));
+        aDayTitle.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        aDayFrame.add(aDayTitle, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 60, 430, 60));
+
+        aDayDeleteBut.setText("Delete");
+        aDayDeleteBut.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                aDayDeleteButMouseClicked(evt);
+            }
+        });
+        aDayFrame.add(aDayDeleteBut, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 470, 110, 40));
+
+        aDayContent.setColumns(20);
+        aDayContent.setForeground(new java.awt.Color(60, 22, 234));
+        aDayContent.setLineWrap(true);
+        aDayContent.setRows(15);
+        aDayContent.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        asdas.setViewportView(aDayContent);
+
+        aDayFrame.add(asdas, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 140, 560, 320));
+        aDayFrame.add(aDaybcg, new org.netbeans.lib.awtextra.AbsoluteConstraints(-6, -5, 730, 550));
+
+        getContentPane().add(aDayFrame, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 100, 720, 540));
+
+        creatingNewDay.setBackground(new java.awt.Color(1, 46, 61));
+        creatingNewDay.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        sep.setBackground(new java.awt.Color(153, 54, 203));
+        sep.setForeground(new java.awt.Color(216, 67, 220));
+        creatingNewDay.add(sep, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 390, 630, 20));
+
+        sep1.setBackground(new java.awt.Color(153, 54, 203));
+        sep1.setForeground(new java.awt.Color(216, 67, 220));
+        creatingNewDay.add(sep1, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 90, 630, 20));
+
+        createdDay.setText("Add");
+        createdDay.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                createdDayMouseClicked(evt);
+            }
+        });
+        creatingNewDay.add(createdDay, new org.netbeans.lib.awtextra.AbsoluteConstraints(580, 420, 100, 40));
+
+        newDayTitle.setFont(new java.awt.Font("Ubuntu", 2, 24)); // NOI18N
+        newDayTitle.setForeground(new java.awt.Color(223, 142, 206));
+        newDayTitle.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        creatingNewDay.add(newDayTitle, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 40, 570, 50));
+
+        Bday.setForeground(new java.awt.Color(223, 142, 206));
+        Bday.setText("Birthday");
+        creatingNewDay.add(Bday, new org.netbeans.lib.awtextra.AbsoluteConstraints(490, 350, 170, 50));
+
+        Happy.setForeground(new java.awt.Color(223, 142, 206));
+        Happy.setText("Happy");
+        creatingNewDay.add(Happy, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 350, 170, 50));
+
+        Sad.setForeground(new java.awt.Color(223, 142, 206));
+        Sad.setText("Sad");
+        creatingNewDay.add(Sad, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 350, 170, 50));
+
+        newDayContent.setColumns(20);
+        newDayContent.setFont(new java.awt.Font("Ubuntu", 2, 24)); // NOI18N
+        newDayContent.setForeground(new java.awt.Color(74, 42, 89));
+        newDayContent.setLineWrap(true);
+        newDayContent.setRows(10);
+        jScrollPane1.setViewportView(newDayContent);
+
+        creatingNewDay.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 120, 630, 230));
+        creatingNewDay.add(crNewDayBcg, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 710, 480));
+
+        getContentPane().add(creatingNewDay, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 150, 710, 480));
+
+        oldDaysList.setBackground(new java.awt.Color(36, 27, 52));
+        oldDaysList.setFont(new java.awt.Font("Ubuntu", 0, 24)); // NOI18N
+        oldDaysList.setForeground(new java.awt.Color(248, 234, 249));
+        oldDaysList.setModel(new javax.swing.AbstractListModel<String>() {
+            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            public int getSize() { return strings.length; }
+            public String getElementAt(int i) { return strings[i]; }
+        });
+        oldDaysList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                oldDaysListValueChanged(evt);
+            }
+        });
+        jScrollPane3.setViewportView(oldDaysList);
+
+        getContentPane().add(jScrollPane3, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 160, 640, 460));
+
+        addNewDay.setText("New Day!");
+        addNewDay.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                addNewDayMouseClicked(evt);
+            }
+        });
+        getContentPane().add(addNewDay, new org.netbeans.lib.awtextra.AbsoluteConstraints(1070, 320, 130, 120));
+
         jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/projket/rsz_2logo.png"))); // NOI18N
         getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 10, 240, 100));
 
         jLabel1.setFont(new java.awt.Font("Symbola", 2, 36)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 0, 210));
-        jLabel1.setText("What do you wanna share?");
+        jLabel1.setText("Your special days");
         getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 90, 450, 50));
-
-        searchtf.setBackground(new java.awt.Color(1, 1, 1));
-        searchtf.setForeground(new java.awt.Color(254, 254, 254));
-        searchtf.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
-        searchtf.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                searchtfMouseClicked(evt);
-            }
-        });
-        getContentPane().add(searchtf, new org.netbeans.lib.awtextra.AbsoluteConstraints(880, 100, 330, 40));
-
-        searchBut.setIcon(new javax.swing.ImageIcon(getClass().getResource("/projket/search.png"))); // NOI18N
-        searchBut.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                searchButActionPerformed(evt);
-            }
-        });
-        getContentPane().add(searchBut, new org.netbeans.lib.awtextra.AbsoluteConstraints(1140, 100, 70, 40));
-
-        searchLabel.setForeground(new java.awt.Color(99, 245, 247));
-        searchLabel.setText("Search anything!");
-        getContentPane().add(searchLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(890, 100, 320, 40));
 
         jPanel1.setBackground(new java.awt.Color(82, 3, 68));
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -161,18 +308,18 @@ public class YourDays extends javax.swing.JFrame {
         });
         jPanel1.add(yourDaysBut, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 270, 120, 40));
 
-        propic.setBackground(new java.awt.Color(221, 128, 35));
-        propic.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
-        propic.addMouseListener(new java.awt.event.MouseAdapter() {
+        propicLabel.setBackground(new java.awt.Color(221, 128, 35));
+        propicLabel.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        propicLabel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                propicMouseClicked(evt);
+                propicLabelMouseClicked(evt);
             }
         });
-        jPanel1.add(propic, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 20, 200, 150));
+        jPanel1.add(propicLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 20, 200, 150));
 
-        jLabel4.setFont(new java.awt.Font("Symbola", 2, 24)); // NOI18N
-        jLabel4.setForeground(new java.awt.Color(254, 254, 254));
-        jPanel1.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 170, 220, 40));
+        usernameLabel.setFont(new java.awt.Font("Symbola", 2, 24)); // NOI18N
+        usernameLabel.setForeground(new java.awt.Color(254, 254, 254));
+        jPanel1.add(usernameLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 170, 220, 40));
 
         notesBut.setFont(new java.awt.Font("Ubuntu", 0, 14)); // NOI18N
         notesBut.setForeground(new java.awt.Color(1, 1, 1));
@@ -300,18 +447,18 @@ public class YourDays extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_yourDaysButActionPerformed
 
-    private void propicMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_propicMouseClicked
+    private void propicLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_propicLabelMouseClicked
         // TODO add your handling code here:
         JFileChooser chooser = new JFileChooser();
         chooser.showOpenDialog(null);
         File f = chooser.getSelectedFile();
         String filename = f.getAbsolutePath();
         
-        propic.setIcon(new ImageIcon(new ImageIcon(filename).getImage().getScaledInstance(200, 150, Image.SCALE_SMOOTH)));
+        propicLabel.setIcon(new ImageIcon(new ImageIcon(filename).getImage().getScaledInstance(200, 150, Image.SCALE_SMOOTH)));
         //ImageIcon icon=new ImageIcon(filename);
         //jLabel3.setIcon(icon);
         
-    }//GEN-LAST:event_propicMouseClicked
+    }//GEN-LAST:event_propicLabelMouseClicked
 
     private void notesButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_notesButActionPerformed
         // TODO add your handling code here:
@@ -337,7 +484,13 @@ public class YourDays extends javax.swing.JFrame {
 
     private void settingsButMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_settingsButMouseClicked
         this.setVisible(false);
-        new Settings().setVisible(true);
+        try {
+            new Settings().setVisible(true);
+        } catch (IOException ex) {
+            Logger.getLogger(YourDays.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(YourDays.class.getName()).log(Level.SEVERE, null, ex);
+        }
         
     }//GEN-LAST:event_settingsButMouseClicked
 
@@ -353,13 +506,23 @@ public class YourDays extends javax.swing.JFrame {
 
     private void notesButMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_notesButMouseClicked
         this.setVisible(false);
-        new Notes().setVisible(true);
+        try {
+            new Notes().setVisible(true);
+        } catch (IOException ex) {
+            Logger.getLogger(YourDays.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(YourDays.class.getName()).log(Level.SEVERE, null, ex);
+        }
                 
     }//GEN-LAST:event_notesButMouseClicked
 
     private void yourDaysButMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_yourDaysButMouseClicked
         this.setVisible(false);
-        new YourDays().setVisible(true);
+        try {
+            new YourDays().setVisible(true);
+        } catch (IOException | ClassNotFoundException ex) {
+            Logger.getLogger(YourDays.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_yourDaysButMouseClicked
 
     private void oldEntriesButMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_oldEntriesButMouseClicked
@@ -373,28 +536,184 @@ public class YourDays extends javax.swing.JFrame {
 
     private void oldTalksButMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_oldTalksButMouseClicked
         this.setVisible(false);
-        new OldTalks().setVisible(true);
+        try {
+            new OldTalks().setVisible(true);
+        } catch (IOException ex) {
+            Logger.getLogger(YourDays.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(YourDays.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_oldTalksButMouseClicked
 
     private void albumsButMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_albumsButMouseClicked
         this.setVisible(false);
-        new Albums().setVisible(true);
+        try {
+            new Albums().setVisible(true);
+        } catch (IOException | ClassNotFoundException ex) {
+            Logger.getLogger(YourDays.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_albumsButMouseClicked
 
     private void nyxButMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_nyxButMouseClicked
         this.setVisible(false);
-        new Nyx().setVisible(true);
+        try {
+            new Nyx().setVisible(true);
+        } catch (Exception ex) {
+            Logger.getLogger(YourDays.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_nyxButMouseClicked
 
-    private void searchtfMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_searchtfMouseClicked
-        // TODO add your handling code here:
-        searchLabel.setVisible(false);
-    }//GEN-LAST:event_searchtfMouseClicked
+    private void addNewDayMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_addNewDayMouseClicked
+        
+        creatingNewDay.setVisible(true);
+    }//GEN-LAST:event_addNewDayMouseClicked
 
-    private void searchButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchButActionPerformed
-        // TODO add your handling code here:
+    private void createdDayMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_createdDayMouseClicked
+        
+        Day nd = new Day();
+        
+        if(!newDayTitle.getText().equals(""))
+            nd.setTitle(newDayTitle.getText());
+        nd.setContent(newDayContent.getText());
+        
+        if(Happy.isEnabled())
+            nd.setType("Happy");
+        else if(Sad.isEnabled())
+            nd.setType("Sad");
+        else if(Bday.isEnabled())
+            nd.setType("Birthday");
+        
+        
+        curUser.addDay(nd);
+        
+        
+        FileOutputStream fout = null;
+        File ff = new File("users/"+curUser.getUsername()+".ser");
+        ff.delete();
+        
+        try {
+            fout = new FileOutputStream("users/"+curUser.getUsername()+".ser");
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(YourDays.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        ObjectOutputStream oos = null;
+        try {
+            oos = new ObjectOutputStream(fout);
+        } catch (IOException ex) {
+            Logger.getLogger(YourDays.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        try {
+            oos.writeObject(curUser);
+        } catch (IOException ex) {
+            Logger.getLogger(YourDays.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        
+        creatingNewDay.setVisible(false);
+        this.dispose();
+        try {
+            new YourDays().setVisible(true);
+        } catch (IOException | ClassNotFoundException ex) {
+            Logger.getLogger(YourDays.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_createdDayMouseClicked
 
-    }//GEN-LAST:event_searchButActionPerformed
+    private void oldDaysListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_oldDaysListValueChanged
+
+        
+        try{
+            int i = oldDaysList.getSelectedIndex();
+            
+            
+            //JOptionPane.showMessageDialog(new JFrame(), "You seem to have forgotten your password, please try again.");
+
+            Day n = new Day();
+            n.setTitle(oldDaysList.getSelectedValue());
+            n = curUser.getSpecificDay(n);
+            aDayTitle.setText(n.getTitle());
+            aDayContent.setText(n.getContent());
+            aDayFrame.setVisible(true);
+            oldDaysList.setVisible(false);
+            addNewDay.setVisible(false);
+            
+            if(n.getType().equals("Happy"))
+            {
+                aDaybcg.setIcon(new ImageIcon(new ImageIcon("/home/abdurrezzak/NetBeansProjects/Projket/src/projket/happyDaybcg.jpg")
+                        .getImage().getScaledInstance(730, 550, Image.SCALE_SMOOTH)));
+                
+            }
+            else if(n.getType().equals("Sad"))
+            {
+             
+                aDaybcg.setIcon(new ImageIcon(new ImageIcon("/home/abdurrezzak/NetBeansProjects/Projket/src/projket/sadDaybcg.jpg")
+                        .getImage().getScaledInstance(730, 550, Image.SCALE_SMOOTH)));
+               
+            }
+            else if(n.getType().equals("Birthday"))
+            {
+                aDaybcg.setIcon(new ImageIcon(new ImageIcon("/home/abdurrezzak/NetBeansProjects/Projket/src/projket/bDaybcg.jpg")
+                        .getImage().getScaledInstance(730, 550, Image.SCALE_SMOOTH)));
+            }
+            
+            aDayContent.setBackground(new Color(82,3,68,10));
+            
+        }catch(NullPointerException e)
+        {
+            
+        }
+
+    }//GEN-LAST:event_oldDaysListValueChanged
+
+    private void aDayFrameMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_aDayFrameMouseClicked
+
+        aDayFrame.setVisible(false);
+        this.dispose();
+        try {
+            new YourDays().setVisible(true);
+        } catch (IOException | ClassNotFoundException ex) {
+            Logger.getLogger(YourDays.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_aDayFrameMouseClicked
+
+    private void aDayDeleteButMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_aDayDeleteButMouseClicked
+   
+        Day d = new Day();
+        d.setTitle(aDayTitle.getText());
+        
+        curUser.deleteDay(d);
+        
+        FileOutputStream fout = null;
+        File ff = new File("users/"+curUser.getUsername()+".ser");
+        ff.delete();
+        
+        try {
+            fout = new FileOutputStream("users/"+curUser.getUsername()+".ser");
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(YourDays.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        ObjectOutputStream oos = null;
+        try {
+            oos = new ObjectOutputStream(fout);
+        } catch (IOException ex) {
+            Logger.getLogger(YourDays.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        try {
+            oos.writeObject(curUser);
+        } catch (IOException ex) {
+            Logger.getLogger(YourDays.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        this.dispose();
+        try {
+            new YourDays().setVisible(true);
+        } catch (IOException | ClassNotFoundException ex) {
+            Logger.getLogger(YourDays.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        
+        
+
+    }//GEN-LAST:event_aDayDeleteButMouseClicked
 
     /**
      * @param args the command line arguments
@@ -432,29 +751,52 @@ public class YourDays extends javax.swing.JFrame {
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> {
-            new YourDays().setVisible(true);
+            try {
+                new YourDays().setVisible(true);
+            } catch (IOException | ClassNotFoundException ex) {
+                Logger.getLogger(YourDays.class.getName()).log(Level.SEVERE, null, ex);
+            }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JRadioButton Bday;
+    private javax.swing.JRadioButton Happy;
+    private javax.swing.JRadioButton Sad;
+    private javax.swing.JTextArea aDayContent;
+    private javax.swing.JButton aDayDeleteBut;
+    private javax.swing.JPanel aDayFrame;
+    private javax.swing.JTextField aDayTitle;
+    private javax.swing.JLabel aDaybcg;
+    private javax.swing.JButton addNewDay;
     private javax.swing.JButton albumsBut;
+    private javax.swing.JScrollPane asdas;
     private javax.swing.JLabel bcghomelabel;
+    private javax.swing.JLabel crNewDayBcg;
+    private javax.swing.JButton createdDay;
+    private javax.swing.JPanel creatingNewDay;
     private javax.swing.JLabel exitBut;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JTextArea newDayContent;
+    private javax.swing.JTextField newDayTitle;
     private javax.swing.JButton newEntryBut;
     private javax.swing.JButton notesBut;
     private javax.swing.JButton nyxBut;
+    private javax.swing.JList<String> oldDaysList;
     private javax.swing.JButton oldEntriesBut;
     private javax.swing.JButton oldTalksBut;
-    private javax.swing.JLabel propic;
-    private javax.swing.JButton searchBut;
-    private javax.swing.JLabel searchLabel;
-    private javax.swing.JTextField searchtf;
+    private javax.swing.JLabel propicLabel;
+    private javax.swing.JSeparator sep;
+    private javax.swing.JSeparator sep1;
     private javax.swing.JLabel settingsBut;
+    private javax.swing.JLabel usernameLabel;
     private javax.swing.JButton yourDaysBut;
     // End of variables declaration//GEN-END:variables
+
+    
 }

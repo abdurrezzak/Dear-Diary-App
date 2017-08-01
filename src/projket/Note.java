@@ -1,13 +1,18 @@
 package projket;
 
 import java.io.Serializable;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class Note implements Serializable{
     
     //properties
-    String title;
+    DateFormat df = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
+    Date dateobj = new Date();
+    String title = df.format(dateobj)+".." ;
     String content;
-    Photo picture;
+    Photo picture = null;
     
     public Note()
     {
@@ -42,6 +47,11 @@ public class Note implements Serializable{
     public void changePicture(Photo p)
     {
         this.picture = p;
+    }
+    
+    public Photo getPicture()
+    {
+        return this.picture;
     }
     
     public void deletePicture()

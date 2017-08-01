@@ -22,6 +22,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JRootPane;
 
 /**
  *
@@ -40,9 +41,9 @@ public class anEntry extends javax.swing.JFrame {
         surfacePanel.setBackground(new Color(19,19,19,100));
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         this.setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);
-        
         pic.setVisible(false);
-        cl.setVisible(false);
+        base.setBackground(new Color(0,0,0));
+        
         String line = null; 
         FileReader fileReader = new FileReader("sessions/usernames.txt");
         try (BufferedReader bufferedReader = new BufferedReader(fileReader)) {
@@ -70,22 +71,27 @@ public class anEntry extends javax.swing.JFrame {
         //JOptionPane.showMessageDialog(new JFrame(), curEnt);
         Entry e = new Entry();
         e.setTitle(curEnt);
-        System.out.println(curUser.getSpecificEntry(e).getText());
+        
+        //System.out.println(curUser.getSpecificEntry(e).getText());
         e = curUser.getSpecificEntry(e);
-        tit.setText(e.getTitle());
-        content.setText(e.getText());
-        content.setBackground(new Color(19,19,19,0));
-        imagesList.setBackground(new Color(19,19,19,70));
-        
-        DefaultListModel dm = new DefaultListModel();
-        
-        for(int i=0;i<e.getMedia().size();i++)
+       
+        if(e != null)
         {
-            dm.addElement(new ImageIcon(new ImageIcon(e.getMedia().get(i).img).getImage().getScaledInstance(112, 112, Image.SCALE_SMOOTH)));
+            tit.setText(e.getTitle());
+            content.setText(e.getText());
+            content.setBackground(new Color(19,19,19,0));
+            imagesList.setBackground(new Color(19,19,19,70));
+
+            DefaultListModel dm = new DefaultListModel();
+
+            for(int i=0;i<e.getMedia().size();i++)
+            {
+                dm.addElement(new ImageIcon(new ImageIcon(e.getMedia().get(i).img).getImage().getScaledInstance(112, 112, Image.SCALE_SMOOTH)));
+            }
+
+            imagesList.setModel(dm);
         }
         
-        imagesList.setModel(dm);
-
         
     }
 
@@ -98,53 +104,60 @@ public class anEntry extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        base = new javax.swing.JPanel();
         pic = new javax.swing.JLabel();
-        cl = new javax.swing.JButton();
-        jButton1 = new javax.swing.JButton();
+        closeBut = new javax.swing.JButton();
         tit = new javax.swing.JLabel();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        content = new javax.swing.JTextPane();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        content = new javax.swing.JTextArea();
         jScrollPane1 = new javax.swing.JScrollPane();
         imagesList = new javax.swing.JList<>();
         surfacePanel = new javax.swing.JPanel();
         mainLabel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setMaximizedBounds(new java.awt.Rectangle(0, 0, 1020, 590));
+        setMaximumSize(new java.awt.Dimension(1020, 590));
+        setSize(new java.awt.Dimension(1020, 590));
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
+        base.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        pic.setBackground(new java.awt.Color(239, 199, 239));
+        pic.setForeground(new java.awt.Color(254, 254, 254));
         pic.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(254, 123, 241)));
         pic.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 picMouseClicked(evt);
             }
         });
-        getContentPane().add(pic, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 10, 600, 530));
+        base.add(pic, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 30, 950, 510));
 
-        cl.setText("Close");
-        getContentPane().add(cl, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 510, -1, -1));
-
-        jButton1.setText("Close");
-        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+        closeBut.setForeground(new java.awt.Color(1, 1, 1));
+        closeBut.setText("Close");
+        closeBut.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jButton1MouseClicked(evt);
+                closeButMouseClicked(evt);
             }
         });
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        closeBut.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                closeButActionPerformed(evt);
             }
         });
-        getContentPane().add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 520, -1, -1));
+        base.add(closeBut, new org.netbeans.lib.awtextra.AbsoluteConstraints(851, 520, 120, 50));
 
         tit.setFont(new java.awt.Font("Ubuntu", 2, 24)); // NOI18N
-        tit.setForeground(new java.awt.Color(254, 214, 237));
-        getContentPane().add(tit, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 50, 590, 50));
+        tit.setForeground(new java.awt.Color(253, 121, 234));
+        base.add(tit, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 50, 850, 50));
 
-        content.setFont(new java.awt.Font("Ubuntu", 2, 24)); // NOI18N
-        content.setForeground(new java.awt.Color(255, 200, 248));
-        jScrollPane2.setViewportView(content);
+        content.setColumns(20);
+        content.setRows(5);
+        jScrollPane3.setViewportView(content);
 
-        getContentPane().add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(28, 110, 480, 390));
+        base.add(jScrollPane3, new org.netbeans.lib.awtextra.AbsoluteConstraints(52, 110, 770, 390));
+
+        jScrollPane1.setForeground(new java.awt.Color(1, 1, 1));
 
         imagesList.setModel(new javax.swing.AbstractListModel<String>() {
             String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
@@ -158,24 +171,29 @@ public class anEntry extends javax.swing.JFrame {
         });
         jScrollPane1.setViewportView(imagesList);
 
-        getContentPane().add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 110, 130, 390));
-        getContentPane().add(surfacePanel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 680, 590));
+        base.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(840, 110, 130, 390));
 
-        mainLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/projket/bcghome.jpg"))); // NOI18N
-        getContentPane().add(mainLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 683, 587));
+        surfacePanel.setBackground(new java.awt.Color(106, 57, 116));
+        base.add(surfacePanel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1030, 590));
+
+        mainLabel.setBackground(new java.awt.Color(98, 18, 100));
+        mainLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/projket/nyx.jpg"))); // NOI18N
+        base.add(mainLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1020, 587));
+
+        getContentPane().add(base, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1020, 590));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
+    private void closeButMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_closeButMouseClicked
         
         this.dispose();
         
-    }//GEN-LAST:event_jButton1MouseClicked
+    }//GEN-LAST:event_closeButMouseClicked
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void closeButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_closeButActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_closeButActionPerformed
 
     private void imagesListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_imagesListValueChanged
         
@@ -191,21 +209,21 @@ public class anEntry extends javax.swing.JFrame {
         e.setTitle(curEnt);
         e = curUser.getSpecificEntry(e);
 
-       // JOptionPane.showMessageDialog(new JFrame(), e.getMedia().get(i).img);
-
-
-        pic.setIcon(new ImageIcon(new ImageIcon(e.getMedia().get(i).img).getImage().getScaledInstance(600, 530, Image.SCALE_SMOOTH)));
+        pic.setIcon(new ImageIcon(new ImageIcon(e.getMedia().get(i).img).getImage().getScaledInstance(950, 510, Image.SCALE_SMOOTH)));
         
         pic.setVisible(true);
-        cl.setVisible(true);
         
         
     }//GEN-LAST:event_imagesListValueChanged
 
     private void picMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_picMouseClicked
-        // TODO add your handling code here:
-        pic.setVisible(false);
-        cl.setVisible(false);
+        
+        this.dispose();
+        try {
+            new anEntry().setVisible(true);
+        } catch (IOException | ClassNotFoundException ex) {
+            Logger.getLogger(anEntry.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_picMouseClicked
     
     /**
@@ -251,12 +269,12 @@ public class anEntry extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton cl;
-    private javax.swing.JTextPane content;
+    private javax.swing.JPanel base;
+    private javax.swing.JButton closeBut;
+    private javax.swing.JTextArea content;
     private javax.swing.JList<String> imagesList;
-    private javax.swing.JButton jButton1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JLabel mainLabel;
     private javax.swing.JLabel pic;
     private javax.swing.JPanel surfacePanel;

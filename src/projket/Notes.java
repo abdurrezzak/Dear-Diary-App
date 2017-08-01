@@ -9,32 +9,78 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Toolkit;
-import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.imageio.ImageIO;
+import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 /**
  *
  * @author abdurrezzak
  */
 public class Notes extends javax.swing.JFrame {
 
+    User curUser = new User();
+    String curusername="";
+    Note newNote = new Note();
+        
+    Note n = new Note(); //for deleting and display
     
-    public Notes() {
+    public Notes() throws FileNotFoundException, IOException, ClassNotFoundException {
         initComponents();
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         this.setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);
         jPanel1.setBackground(new Color(82,3,68,0));
+        oldNotesList.setBackground(new Color(0,0,0));
+        addingNotebcg.setIcon(new ImageIcon(new ImageIcon("/home/abdurrezzak/NetBeansProjects/Projket/src/projket/postit.jpg").getImage().getScaledInstance(670, 530, Image.SCALE_SMOOTH)));
+        aNote.setVisible(false);
+        aNote.setBackground(new Color(0,0,0,0));
+        aNoteContent.setBackground(new Color(0,0,0,0));
+        bcgANote.setIcon(new ImageIcon(new ImageIcon("/home/abdurrezzak/NetBeansProjects/Projket/src/projket/postit.jpg").getImage().getScaledInstance(670, 530, Image.SCALE_SMOOTH)));
+        String line = null; 
+        FileReader fileReader = new FileReader("sessions/usernames.txt");
+        try (BufferedReader bufferedReader = new BufferedReader(fileReader)) {
+            while((line = bufferedReader.readLine()) != null) {
+                curusername = line;
+            }
+        } 
         
-        searchtf.setBackground(new Color(154,98,246,100));
         
-        searchBut.setBackground(new Color(0,0,0,0));
+        FileInputStream fis = new FileInputStream("users/"+curusername+".ser");
+        ObjectInputStream ois = new ObjectInputStream(fis);
+        curUser = (User) ois.readObject();
         
-        propic.setToolTipText("Click here to change your profile picture!");
+        //getting current info
+        propicLabel.setIcon(new ImageIcon(new ImageIcon(curUser.getProfilePicture()).getImage().getScaledInstance(200, 150, Image.SCALE_SMOOTH)));
+        usernameLabel.setText("Welcome "+curUser.getUsername() + "!");
+        
+        
+        propicLabel.setToolTipText("Click here to change your profile picture!");
+        
+        DefaultListModel dm = new DefaultListModel();
+        
+        for(int i=0;i<curUser.getNotes().size();i++)
+        {
+            dm.addElement(curUser.getNotes().get(i).getTitle());
+        }
+        
+        oldNotesList.setModel(dm);
+        
+        
+        addingNote.setVisible(false);
+        
+        
     }
 
     /**
@@ -46,17 +92,32 @@ public class Notes extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        aNote = new javax.swing.JPanel();
+        aNoteTitle = new javax.swing.JLabel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        aNoteContent = new javax.swing.JTextArea();
+        aNotePic = new javax.swing.JLabel();
+        deleteNoteBut = new javax.swing.JButton();
+        bcgANote = new javax.swing.JLabel();
+        addingNote = new javax.swing.JPanel();
+        createdNote = new javax.swing.JButton();
+        newNoteTitle = new javax.swing.JTextField();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        newNoteContent = new javax.swing.JTextArea();
+        newNotePic = new javax.swing.JLabel();
+        newNoteAddImageBut = new javax.swing.JButton();
+        addingNotebcg = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
-        searchtf = new javax.swing.JTextField();
-        searchBut = new javax.swing.JButton();
-        searchLabel = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        oldNotesList = new javax.swing.JList<>();
+        addNoteBut = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         nyxBut = new javax.swing.JButton();
         newEntryBut = new javax.swing.JButton();
         yourDaysBut = new javax.swing.JButton();
-        propic = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
+        propicLabel = new javax.swing.JLabel();
+        usernameLabel = new javax.swing.JLabel();
         notesBut = new javax.swing.JButton();
         oldEntriesBut = new javax.swing.JButton();
         albumsBut = new javax.swing.JButton();
@@ -72,6 +133,83 @@ public class Notes extends javax.swing.JFrame {
         setMinimumSize(new java.awt.Dimension(1280, 670));
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
+        aNote.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                aNoteMouseClicked(evt);
+            }
+        });
+        aNote.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        aNoteTitle.setFont(new java.awt.Font("Ubuntu", 2, 28)); // NOI18N
+        aNoteTitle.setForeground(new java.awt.Color(181, 7, 202));
+        aNote.add(aNoteTitle, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 30, 530, 80));
+
+        aNoteContent.setColumns(20);
+        aNoteContent.setRows(5);
+        aNoteContent.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED, new java.awt.Color(219, 32, 254), new java.awt.Color(219, 32, 254)));
+        jScrollPane3.setViewportView(aNoteContent);
+
+        aNote.add(jScrollPane3, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 120, 310, 270));
+
+        aNotePic.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED, new java.awt.Color(219, 32, 254), new java.awt.Color(219, 32, 254)));
+        aNote.add(aNotePic, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 120, 270, 270));
+
+        deleteNoteBut.setText("Delete Note");
+        deleteNoteBut.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                deleteNoteButMouseClicked(evt);
+            }
+        });
+        aNote.add(deleteNoteBut, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 470, -1, -1));
+        aNote.add(bcgANote, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 690, 530));
+
+        getContentPane().add(aNote, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 90, 690, 530));
+
+        addingNote.setBackground(new java.awt.Color(1, 1, 1));
+        addingNote.setForeground(new java.awt.Color(254, 180, 231));
+        addingNote.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        createdNote.setBackground(new java.awt.Color(82, 3, 69));
+        createdNote.setFont(new java.awt.Font("Ubuntu", 2, 24)); // NOI18N
+        createdNote.setForeground(new java.awt.Color(253, 186, 224));
+        createdNote.setText("OK");
+        createdNote.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                createdNoteMouseClicked(evt);
+            }
+        });
+        addingNote.add(createdNote, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 400, 90, -1));
+
+        newNoteTitle.setBackground(new java.awt.Color(82, 3, 69));
+        newNoteTitle.setFont(new java.awt.Font("Ubuntu", 2, 24)); // NOI18N
+        newNoteTitle.setForeground(new java.awt.Color(253, 186, 224));
+        newNoteTitle.setText("Title");
+        addingNote.add(newNoteTitle, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 38, 590, 40));
+
+        newNoteContent.setBackground(new java.awt.Color(82, 3, 69));
+        newNoteContent.setColumns(15);
+        newNoteContent.setFont(new java.awt.Font("Ubuntu", 2, 24)); // NOI18N
+        newNoteContent.setForeground(new java.awt.Color(253, 186, 224));
+        newNoteContent.setRows(5);
+        jScrollPane2.setViewportView(newNoteContent);
+
+        addingNote.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 110, 340, 270));
+        addingNote.add(newNotePic, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 110, 200, 210));
+
+        newNoteAddImageBut.setBackground(new java.awt.Color(82, 3, 69));
+        newNoteAddImageBut.setFont(new java.awt.Font("Ubuntu", 2, 24)); // NOI18N
+        newNoteAddImageBut.setForeground(new java.awt.Color(253, 186, 224));
+        newNoteAddImageBut.setText("Add Image");
+        newNoteAddImageBut.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                newNoteAddImageButMouseClicked(evt);
+            }
+        });
+        addingNote.add(newNoteAddImageBut, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 330, 200, 40));
+        addingNote.add(addingNotebcg, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 690, 450));
+
+        getContentPane().add(addingNote, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 170, 690, 450));
+
         jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/projket/rsz_2logo.png"))); // NOI18N
         getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 10, 240, 100));
 
@@ -80,27 +218,40 @@ public class Notes extends javax.swing.JFrame {
         jLabel1.setText("Notes");
         getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 90, 450, 50));
 
-        searchtf.setBackground(new java.awt.Color(1, 1, 1));
-        searchtf.setForeground(new java.awt.Color(254, 254, 254));
-        searchtf.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
-        searchtf.addMouseListener(new java.awt.event.MouseAdapter() {
+        oldNotesList.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        oldNotesList.setFont(new java.awt.Font("Ubuntu", 2, 24)); // NOI18N
+        oldNotesList.setForeground(new java.awt.Color(254, 254, 254));
+        oldNotesList.setModel(new javax.swing.AbstractListModel<String>() {
+            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            public int getSize() { return strings.length; }
+            public String getElementAt(int i) { return strings[i]; }
+        });
+        oldNotesList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        oldNotesList.setLayoutOrientation(javax.swing.JList.HORIZONTAL_WRAP);
+        oldNotesList.setNextFocusableComponent(oldNotesList);
+        oldNotesList.setVisibleRowCount(100);
+        oldNotesList.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                oldNotesListMousePressed(evt);
+            }
+        });
+        oldNotesList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                oldNotesListValueChanged(evt);
+            }
+        });
+        jScrollPane1.setViewportView(oldNotesList);
+
+        getContentPane().add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 220, 690, 360));
+
+        addNoteBut.setBackground(new java.awt.Color(212, 50, 177));
+        addNoteBut.setText("Add Note");
+        addNoteBut.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                searchtfMouseClicked(evt);
+                addNoteButMouseClicked(evt);
             }
         });
-        getContentPane().add(searchtf, new org.netbeans.lib.awtextra.AbsoluteConstraints(880, 100, 330, 40));
-
-        searchBut.setIcon(new javax.swing.ImageIcon(getClass().getResource("/projket/search.png"))); // NOI18N
-        searchBut.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                searchButActionPerformed(evt);
-            }
-        });
-        getContentPane().add(searchBut, new org.netbeans.lib.awtextra.AbsoluteConstraints(1140, 100, 70, 40));
-
-        searchLabel.setForeground(new java.awt.Color(99, 245, 247));
-        searchLabel.setText("Search anything!");
-        getContentPane().add(searchLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(890, 100, 320, 40));
+        getContentPane().add(addNoteBut, new org.netbeans.lib.awtextra.AbsoluteConstraints(1120, 330, 90, 90));
 
         jPanel1.setBackground(new java.awt.Color(82, 3, 68));
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -163,18 +314,18 @@ public class Notes extends javax.swing.JFrame {
         });
         jPanel1.add(yourDaysBut, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 270, 120, 40));
 
-        propic.setBackground(new java.awt.Color(221, 128, 35));
-        propic.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
-        propic.addMouseListener(new java.awt.event.MouseAdapter() {
+        propicLabel.setBackground(new java.awt.Color(221, 128, 35));
+        propicLabel.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        propicLabel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                propicMouseClicked(evt);
+                propicLabelMouseClicked(evt);
             }
         });
-        jPanel1.add(propic, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 20, 200, 150));
+        jPanel1.add(propicLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 20, 200, 150));
 
-        jLabel4.setFont(new java.awt.Font("Symbola", 2, 24)); // NOI18N
-        jLabel4.setForeground(new java.awt.Color(254, 254, 254));
-        jPanel1.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 170, 220, 40));
+        usernameLabel.setFont(new java.awt.Font("Symbola", 2, 24)); // NOI18N
+        usernameLabel.setForeground(new java.awt.Color(254, 254, 254));
+        jPanel1.add(usernameLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 170, 220, 40));
 
         notesBut.setFont(new java.awt.Font("Ubuntu", 0, 14)); // NOI18N
         notesBut.setForeground(new java.awt.Color(1, 1, 1));
@@ -302,18 +453,18 @@ public class Notes extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_yourDaysButActionPerformed
 
-    private void propicMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_propicMouseClicked
+    private void propicLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_propicLabelMouseClicked
         // TODO add your handling code here:
         JFileChooser chooser = new JFileChooser();
         chooser.showOpenDialog(null);
         File f = chooser.getSelectedFile();
         String filename = f.getAbsolutePath();
         
-        propic.setIcon(new ImageIcon(new ImageIcon(filename).getImage().getScaledInstance(200, 150, Image.SCALE_SMOOTH)));
+        propicLabel.setIcon(new ImageIcon(new ImageIcon(filename).getImage().getScaledInstance(200, 150, Image.SCALE_SMOOTH)));
         //ImageIcon icon=new ImageIcon(filename);
         //jLabel3.setIcon(icon);
         
-    }//GEN-LAST:event_propicMouseClicked
+    }//GEN-LAST:event_propicLabelMouseClicked
 
     private void notesButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_notesButActionPerformed
         // TODO add your handling code here:
@@ -339,7 +490,13 @@ public class Notes extends javax.swing.JFrame {
 
     private void settingsButMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_settingsButMouseClicked
         this.setVisible(false);
-        new Settings().setVisible(true);
+        try {
+            new Settings().setVisible(true);
+        } catch (IOException ex) {
+            Logger.getLogger(Notes.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(Notes.class.getName()).log(Level.SEVERE, null, ex);
+        }
         
     }//GEN-LAST:event_settingsButMouseClicked
 
@@ -355,13 +512,23 @@ public class Notes extends javax.swing.JFrame {
 
     private void notesButMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_notesButMouseClicked
         this.setVisible(false);
-        new Notes().setVisible(true);
+        try {
+            new Notes().setVisible(true);
+        } catch (IOException ex) {
+            Logger.getLogger(Notes.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(Notes.class.getName()).log(Level.SEVERE, null, ex);
+        }
                 
     }//GEN-LAST:event_notesButMouseClicked
 
     private void yourDaysButMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_yourDaysButMouseClicked
         this.setVisible(false);
-        new YourDays().setVisible(true);
+        try {
+            new YourDays().setVisible(true);
+        } catch (IOException | ClassNotFoundException ex) {
+            Logger.getLogger(Notes.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_yourDaysButMouseClicked
 
     private void oldEntriesButMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_oldEntriesButMouseClicked
@@ -375,27 +542,162 @@ public class Notes extends javax.swing.JFrame {
 
     private void oldTalksButMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_oldTalksButMouseClicked
         this.setVisible(false);
-        new OldTalks().setVisible(true);
+        try {
+            new OldTalks().setVisible(true);
+        } catch (IOException ex) {
+            Logger.getLogger(Notes.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(Notes.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_oldTalksButMouseClicked
 
     private void albumsButMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_albumsButMouseClicked
         this.setVisible(false);
-        new Albums().setVisible(true);
+        try {
+            new Albums().setVisible(true);
+        } catch (IOException | ClassNotFoundException ex) {
+            Logger.getLogger(Notes.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_albumsButMouseClicked
 
     private void nyxButMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_nyxButMouseClicked
         this.setVisible(false);
-        new Nyx().setVisible(true);
+        try {
+            new Nyx().setVisible(true);
+        } catch (Exception ex) {
+            Logger.getLogger(Notes.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_nyxButMouseClicked
 
-    private void searchtfMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_searchtfMouseClicked
-        // TODO add your handling code here:
-        searchLabel.setVisible(false);
-    }//GEN-LAST:event_searchtfMouseClicked
+    private void addNoteButMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_addNoteButMouseClicked
+        
+        addingNote.setVisible(true);
+        
+    }//GEN-LAST:event_addNoteButMouseClicked
 
-    private void searchButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchButActionPerformed
+    private void createdNoteMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_createdNoteMouseClicked
+        
+        
+        newNote.setTitle(newNoteTitle.getText());
+        newNote.setContent(newNoteContent.getText());
+        if(newNote.getPicture() == null)
+            newNote.changePicture(new Photo());
+         
+        curUser.addNote(newNote);
+        
+        FileOutputStream fout = null;
+        File ff = new File("users/"+curUser.getUsername()+".ser");
+        ff.delete();
+        try {
+            fout = new FileOutputStream("users/"+curUser.getUsername()+".ser");
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(Notes.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        ObjectOutputStream oos = null;
+        try {
+            oos = new ObjectOutputStream(fout);
+        } catch (IOException ex) {
+            Logger.getLogger(Notes.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        try {
+            oos.writeObject(curUser);
+        } catch (IOException ex) {
+            Logger.getLogger(Notes.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        addingNote.setVisible(false);
+        this.dispose();
+        try {
+            new Notes().setVisible(true);
+        } catch (IOException ex) {
+            Logger.getLogger(Notes.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(Notes.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        newNote = new Note();
+        
+    }//GEN-LAST:event_createdNoteMouseClicked
+
+    private void newNoteAddImageButMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_newNoteAddImageButMouseClicked
+        
+        JFileChooser chooser = new JFileChooser();
+        chooser.showOpenDialog(null);
+        File f = chooser.getSelectedFile();
+        String filename = f.getAbsolutePath();
+        
+        newNotePic.setIcon(new ImageIcon(new ImageIcon(filename).getImage().getScaledInstance(200, 150, Image.SCALE_SMOOTH)));
+        
+        Photo p = new Photo();
+        p.changeImage(filename);
+        newNote.changePicture(p);
+        
+    }//GEN-LAST:event_newNoteAddImageButMouseClicked
+
+    private void oldNotesListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_oldNotesListValueChanged
+        
+        try{
+            int i = oldNotesList.getSelectedIndex();
+            
+            
+            //JOptionPane.showMessageDialog(new JFrame(), "You seem to have forgotten your password, please try again.");
+
+            
+            n.setTitle(oldNotesList.getSelectedValue());
+            n = curUser.getSpecificNote(n);
+            aNoteTitle.setText(n.getTitle());
+            aNoteContent.setText(n.getContent());
+            aNotePic.setIcon(new ImageIcon(new ImageIcon(n.getPicture().img).getImage().getScaledInstance(270, 270, Image.SCALE_SMOOTH)));
+
+            aNote.setVisible(true);
+            
+        }catch(NullPointerException e)
+        {
+            
+        }
+    }//GEN-LAST:event_oldNotesListValueChanged
+
+    private void aNoteMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_aNoteMouseClicked
+        
+        aNote.setVisible(false);
+        
+    }//GEN-LAST:event_aNoteMouseClicked
+
+    private void oldNotesListMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_oldNotesListMousePressed
         // TODO add your handling code here:
-    }//GEN-LAST:event_searchButActionPerformed
+        oldNotesList.setSelectedIndex(-1);
+    }//GEN-LAST:event_oldNotesListMousePressed
+
+    private void deleteNoteButMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_deleteNoteButMouseClicked
+        
+        curUser.deleteNote(n);
+        FileOutputStream fout = null;
+        File ff = new File("users/"+curUser.getUsername()+".ser");
+        ff.delete();
+        try {
+            fout = new FileOutputStream("users/"+curUser.getUsername()+".ser");
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(Notes.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        ObjectOutputStream oos = null;
+        try {
+            oos = new ObjectOutputStream(fout);
+        } catch (IOException ex) {
+            Logger.getLogger(Notes.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        try {
+            oos.writeObject(curUser);
+        } catch (IOException ex) {
+            Logger.getLogger(Notes.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        aNote.setVisible(false);
+        this.dispose();
+        try {
+            new Notes().setVisible(true);
+        } catch (IOException ex) {
+            Logger.getLogger(Notes.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(Notes.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_deleteNoteButMouseClicked
 
     /**
      * @param args the command line arguments
@@ -429,29 +731,50 @@ public class Notes extends javax.swing.JFrame {
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> {
-            new Notes().setVisible(true);
+            try {
+                new Notes().setVisible(true);
+            } catch (IOException ex) {
+                Logger.getLogger(Notes.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (ClassNotFoundException ex) {
+                Logger.getLogger(Notes.class.getName()).log(Level.SEVERE, null, ex);
+            }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel aNote;
+    private javax.swing.JTextArea aNoteContent;
+    private javax.swing.JLabel aNotePic;
+    private javax.swing.JLabel aNoteTitle;
+    private javax.swing.JButton addNoteBut;
+    private javax.swing.JPanel addingNote;
+    private javax.swing.JLabel addingNotebcg;
     private javax.swing.JButton albumsBut;
+    private javax.swing.JLabel bcgANote;
     private javax.swing.JLabel bcghomelabel;
+    private javax.swing.JButton createdNote;
+    private javax.swing.JButton deleteNoteBut;
     private javax.swing.JLabel exitBut;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JButton newEntryBut;
+    private javax.swing.JButton newNoteAddImageBut;
+    private javax.swing.JTextArea newNoteContent;
+    private javax.swing.JLabel newNotePic;
+    private javax.swing.JTextField newNoteTitle;
     private javax.swing.JButton notesBut;
     private javax.swing.JButton nyxBut;
     private javax.swing.JButton oldEntriesBut;
+    private javax.swing.JList<String> oldNotesList;
     private javax.swing.JButton oldTalksBut;
-    private javax.swing.JLabel propic;
-    private javax.swing.JButton searchBut;
-    private javax.swing.JLabel searchLabel;
-    private javax.swing.JTextField searchtf;
+    private javax.swing.JLabel propicLabel;
     private javax.swing.JLabel settingsBut;
+    private javax.swing.JLabel usernameLabel;
     private javax.swing.JButton yourDaysBut;
     // End of variables declaration//GEN-END:variables
 }
